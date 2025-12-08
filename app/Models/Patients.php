@@ -18,4 +18,17 @@ class Patients extends Model
         'alamat',
         'tanggal_registrasi',
     ];
+
+    protected $casts = [
+        'tanggal_lahir' => 'date',
+        'tanggal_registrasi' => 'date',
+    ];
+
+    public function user() {
+        return $this->belongsTo(User::class);
+    }
+
+    public function visits() {
+        return $this->hasMany(Visits::class);
+    }
 }

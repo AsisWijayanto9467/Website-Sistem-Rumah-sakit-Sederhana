@@ -9,6 +9,20 @@ class Doctors extends Model
     protected $table = 'doctors';
 
     protected $fillable = [
-
+        'user_id',
+        'nama',
+        'spesialisasi',
+        'lama_pengalaman',
+        'pendidikan',
+        'nomor_telpon',
+        'status'
     ];
+
+    public function user() {
+        return $this->belongsTo(User::class);
+    }
+
+    public function visits() {
+        return $this->hasMany(Visits::class);
+    }
 }

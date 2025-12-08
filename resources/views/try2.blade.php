@@ -7,7 +7,7 @@
 @endpush
 
 @section('content')
-    <h1 class="underline text-2xl text-blue-800">Hallo Haloo</h1>
+    <h1>Lets try it bruh</h1>
 @endsection
 
 @push('scripts')
