@@ -1,13 +1,13 @@
 @extends('layout.app')
 
-@section('title','Dashboard')
+@section('title','Data Obat')
 
 
 @push('styles')
 @endpush
 
 @section('content')
-    <h1>Lets try it bruh</h1>
+    
 @endsection
 
 @push('scripts')

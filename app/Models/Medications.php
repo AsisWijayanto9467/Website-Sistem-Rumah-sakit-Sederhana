@@ -22,4 +22,8 @@ class Medications extends Model
     public function visitDetails() {
         return $this->hasMany(Visit_Details::class);
     }
+
+    public function visit_details() {
+        return $this->hasMany(Visit_Details::class,'medication_id');
+    }
 }

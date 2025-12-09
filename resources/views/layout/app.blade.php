@@ -5,76 +5,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sidebar Tailwind dengan Dropdown Smooth</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+    @vite('resources/css/app.css')
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        primary: {
-                            50: '#eff6ff',
-                            100: '#dbeafe',
-                            200: '#bfdbfe',
-                            300: '#93c5fd',
-                            400: '#60a5fa',
-                            500: '#3b82f6',
-                            600: '#2563eb',
-                            700: '#1d4ed8',
-                            800: '#1e40af',
-                            900: '#1e3a8a',
-                        },
-                        sidebar: {
-                            bg: '#1e293b',
-                            text: '#f1f5f9',
-                            hover: '#334155',
-                            active: '#3b82f6',
-                        }
-                    },
-                    transitionProperty: {
-                        'height': 'height',
-                        'max-height': 'max-height',
-                        'spacing': 'margin, padding',
-                    },
-                    animation: {
-                        'fadeIn': 'fadeIn 0.3s ease-in-out',
-                        'slideDown': 'slideDown 0.4s ease-out',
-                        'slideUp': 'slideUp 0.3s ease-out',
-                    },
-                    keyframes: {
-                        fadeIn: {
-                            '0%': {
-                                opacity: '0'
-                            },
-                            '100%': {
-                                opacity: '1'
-                            },
-                        },
-                        slideDown: {
-                            '0%': {
-                                transform: 'translateY(-10px)',
-                                opacity: '0'
-                            },
-                            '100%': {
-                                transform: 'translateY(0)',
-                                opacity: '1'
-                            },
-                        },
-                        slideUp: {
-                            '0%': {
-                                transform: 'translateY(0)',
-                                opacity: '1'
-                            },
-                            '100%': {
-                                transform: 'translateY(-10px)',
-                                opacity: '0'
-                            },
-                        },
-                    }
-                }
-            }
-        }
-    </script>
     <style>
         /* Custom CSS untuk animasi dropdown yang lebih smooth */
         .dropdown-transition {
@@ -119,12 +51,6 @@
             /* 384px */
         }
 
-        /* Untuk sidebar yang lebih besar */
-        .sidebar-expanded {
-            width: 280px;
-            /* Lebih besar dari sebelumnya (64 = 256px) */
-        }
-
         /* CSS untuk menu aktif */
         .menu-item.active {
             background-color: #3b82f6 !important;
@@ -152,6 +78,52 @@
         .submenu-item.inactive {
             background-color: transparent !important;
         }
+
+        /* Animasi fadeIn */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
+        /* Animasi slideDown */
+        @keyframes slideDown {
+            from {
+                transform: translateY(-10px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        /* Animasi slideUp */
+        @keyframes slideUp {
+            from {
+                transform: translateY(0);
+                opacity: 1;
+            }
+            to {
+                transform: translateY(-10px);
+                opacity: 0;
+            }
+        }
+
+        .animate-fadeIn {
+            animation: fadeIn 0.3s ease-in-out;
+        }
+
+        .animate-slideDown {
+            animation: slideDown 0.4s ease-out;
+        }
+
+        .animate-slideUp {
+            animation: slideUp 0.3s ease-out;
+        }
     </style>
 
     @stack('styles')
@@ -160,24 +132,24 @@
 <body class="bg-gray-50 text-gray-800 min-h-screen flex">
     <!-- Toggle Button for Mobile (Hidden on Desktop) -->
     <button id="sidebarToggle"
-        class="lg:hidden fixed top-3 left-4 z-50 bg-primary-600 text-white p-3 rounded-lg shadow-lg hover:bg-primary-700 transition-colors duration-200">
+        class="lg:hidden fixed top-3 left-4 z-50 bg-blue-600 text-white p-3 rounded-lg shadow-lg hover:bg-blue-700 transition-colors duration-200">
         <i id="toggleIcon" class="fas fa-bars text-lg"></i>
     </button>
 
     <!-- Sidebar - Diperbesar menjadi w-80 (320px) -->
     <aside id="sidebar"
-        class="bg-sidebar-bg text-sidebar-text w-80 min-h-screen flex flex-col shadow-xl transition-all duration-300 fixed lg:static z-40 -translate-x-full lg:translate-x-0">
+        class="bg-slate-800 text-slate-100 w-80 min-h-screen flex flex-col shadow-xl transition-all duration-300 fixed lg:static z-40 -translate-x-full lg:translate-x-0">
         <!-- Sidebar Header - Diperbesar -->
-        <div class="p-7 border-b border-gray-700 flex items-center space-x-4">
+        <div class="p-7 border-b border-slate-700 flex items-center space-x-4">
             <div
-                class="w-12 h-12 rounded-lg bg-gradient-to-br from-primary-500 to-cyan-400 flex items-center justify-center">
+                class="w-12 h-12 rounded-lg bg-gradient-to-br from-blue-500 to-cyan-400 flex items-center justify-center">
                 <i class="fas fa-hospital text-white text-2xl"></i>
             </div>
             <div>
                 <h1
-                    class="text-2xl font-bold bg-gradient-to-r from-primary-400 to-cyan-300 bg-clip-text text-transparent">
+                    class="text-2xl font-bold bg-gradient-to-r from-blue-400 to-cyan-300 bg-clip-text text-transparent">
                     Menu Utama</h1>
-                <p class="text-xs text-gray-400 mt-1">Management System</p>
+                <p class="text-xs text-slate-400 mt-1">Management System</p>
             </div>
         </div>
 
@@ -185,8 +157,8 @@
         <div class="flex-1 overflow-y-auto sidebar-scrollbar p-5">
             <nav class="space-y-2">
                 <!-- Dashboard Item -->
-                <a href="{{ route('try') }}"
-                    class="menu-item flex items-center space-x-4 p-3 rounded-xl hover:bg-sidebar-hover transition-all duration-200 group inactive"
+                <a href=""
+                    class="menu-item flex items-center space-x-4 p-3 rounded-xl hover:bg-slate-700 transition-all duration-200 group @if(request()->routeIs('dashboard')) active @else inactive @endif"
                     data-menu="beranda">
                     <i class="fas fa-home text-xl w-8 text-center"></i>
                     <span class="font-medium text-lg">Beranda</span>
@@ -195,7 +167,7 @@
                 {{-- Bagian Kunjungan --}}
                 <div class="dropdown-group" data-menu-parent="kunjungan">
                     <button
-                        class="dropdown-toggle w-full flex items-center justify-between p-3 rounded-xl hover:bg-sidebar-hover transition-all duration-200 group inactive"
+                        class="dropdown-toggle w-full flex items-center justify-between p-3 rounded-xl hover:bg-slate-700 transition-all duration-200 group @if(request()->routeIs('kunjungan.*')) active @else inactive @endif"
                         data-menu="kunjungan">
                         <div class="flex items-center space-x-4">
                             <i class="fas fa-calendar-check text-xl w-8 text-center"></i>
@@ -204,21 +176,21 @@
                         <i
                             class="dropdown-arrow fas fa-chevron-down text-base transition-transform duration-300 rotate-0"></i>
                     </button>
-                    <div class="dropdown-content max-h-0 overflow-hidden dropdown-transition ml-12 mt-2 space-y-2">
-                        <a href="{{ route('try1') }}"
-                            class="submenu-item flex items-center py-3 px-4 rounded-lg hover:bg-sidebar-hover transition-colors duration-200 text-gray-300 hover:text-white inactive"
+                    <div class="dropdown-content max-h-0 overflow-hidden dropdown-transition ml-12 mt-2 space-y-2 @if(request()->routeIs('kunjungan.*')) !max-h-96 @endif">
+                        <a href=""
+                            class="submenu-item flex items-center py-3 px-4 rounded-lg hover:bg-slate-700 transition-colors duration-200 text-slate-300 hover:text-white @if(request()->routeIs('kunjungan.create')) active @else inactive @endif"
                             data-submenu="tambah-kunjungan">
                             <i class="fas fa-calendar-plus mr-3 text-base"></i>
                             <span>Tambah Kunjungan</span>
                         </a>
-                        <a href="#"
-                            class="submenu-item flex items-center py-3 px-4 rounded-lg hover:bg-sidebar-hover transition-colors duration-200 text-gray-300 hover:text-white inactive"
+                        <a href=""
+                            class="submenu-item flex items-center py-3 px-4 rounded-lg hover:bg-slate-700 transition-colors duration-200 text-slate-300 hover:text-white @if(request()->routeIs('kunjungan.pending')) active @else inactive @endif"
                             data-submenu="kunjungan-tertunda">
                             <i class="fas fa-clock mr-3 text-base"></i>
                             <span>Kunjungan Tertunda</span>
                         </a>
-                        <a href="#"
-                            class="submenu-item flex items-center py-3 px-4 rounded-lg hover:bg-sidebar-hover transition-colors duration-200 text-gray-300 hover:text-white inactive"
+                        <a href=""
+                            class="submenu-item flex items-center py-3 px-4 rounded-lg hover:bg-slate-700 transition-colors duration-200 text-slate-300 hover:text-white @if(request()->routeIs('kunjungan.approved')) active @else inactive @endif"
                             data-submenu="kunjungan-disetujui">
                             <i class="fas fa-check-circle mr-3 text-base"></i>
                             <span>Kunjungan Disetujui</span>
@@ -229,7 +201,7 @@
                 {{-- Bagian Dokter --}}
                 <div class="dropdown-group" data-menu-parent="dokter">
                     <button
-                        class="dropdown-toggle w-full flex items-center justify-between p-3 rounded-xl hover:bg-sidebar-hover transition-all duration-200 group inactive"
+                        class="dropdown-toggle w-full flex items-center justify-between p-3 rounded-xl hover:bg-slate-700 transition-all duration-200 group @if(request()->routeIs('dokter.*')) active @else inactive @endif"
                         data-menu="dokter">
                         <div class="flex items-center space-x-4">
                             <i class="fas fa-user-md text-xl w-8 text-center"></i>
@@ -238,15 +210,15 @@
                         <i
                             class="dropdown-arrow fas fa-chevron-down text-base transition-transform duration-300 rotate-0"></i>
                     </button>
-                    <div class="dropdown-content max-h-0 overflow-hidden dropdown-transition ml-12 mt-2 space-y-2">
-                        <a href="#"
-                            class="submenu-item flex items-center py-3 px-4 rounded-lg hover:bg-sidebar-hover transition-colors duration-200 text-gray-300 hover:text-white inactive"
+                    <div class="dropdown-content max-h-0 overflow-hidden dropdown-transition ml-12 mt-2 space-y-2 @if(request()->routeIs('dokter.*')) !max-h-96 @endif">
+                        <a href=""
+                            class="submenu-item flex items-center py-3 px-4 rounded-lg hover:bg-slate-700 transition-colors duration-200 text-slate-300 hover:text-white @if(request()->routeIs('dokter.create')) active @else inactive @endif"
                             data-submenu="tambah-dokter">
                             <i class="fas fa-user-plus mr-3 text-base"></i>
                             <span>Tambah Dokter</span>
                         </a>
-                        <a href="#"
-                            class="submenu-item flex items-center py-3 px-4 rounded-lg hover:bg-sidebar-hover transition-colors duration-200 text-gray-300 hover:text-white inactive"
+                        <a href=""
+                            class="submenu-item flex items-center py-3 px-4 rounded-lg hover:bg-slate-700 transition-colors duration-200 text-slate-300 hover:text-white @if(request()->routeIs('dokter.index')) active @else inactive @endif"
                             data-submenu="data-dokter">
                             <i class="fas fa-list-alt mr-3 text-base"></i>
                             <span>Data Dokter</span>
@@ -257,7 +229,7 @@
                 {{-- Bagian Pasien --}}
                 <div class="dropdown-group" data-menu-parent="pasien">
                     <button
-                        class="dropdown-toggle w-full flex items-center justify-between p-3 rounded-xl hover:bg-sidebar-hover transition-all duration-200 group inactive"
+                        class="dropdown-toggle w-full flex items-center justify-between p-3 rounded-xl hover:bg-slate-700 transition-all duration-200 group @if(request()->routeIs('pasien.*')) active @else inactive @endif"
                         data-menu="pasien">
                         <div class="flex items-center space-x-4">
                             <i class="fas fa-user-injured text-xl w-8 text-center"></i>
@@ -266,15 +238,15 @@
                         <i
                             class="dropdown-arrow fas fa-chevron-down text-base transition-transform duration-300 rotate-0"></i>
                     </button>
-                    <div class="dropdown-content max-h-0 overflow-hidden dropdown-transition ml-12 mt-2 space-y-2">
-                        <a href="#"
-                            class="submenu-item flex items-center py-3 px-4 rounded-lg hover:bg-sidebar-hover transition-colors duration-200 text-gray-300 hover:text-white inactive"
+                    <div class="dropdown-content max-h-0 overflow-hidden dropdown-transition ml-12 mt-2 space-y-2 @if(request()->routeIs('pasien.*')) !max-h-96 @endif">
+                        <a href=""
+                            class="submenu-item flex items-center py-3 px-4 rounded-lg hover:bg-slate-700 transition-colors duration-200 text-slate-300 hover:text-white @if(request()->routeIs('pasien.create')) active @else inactive @endif"
                             data-submenu="tambah-pasien">
                             <i class="fas fa-user-plus mr-3 text-base"></i>
                             <span>Tambah Pasien</span>
                         </a>
-                        <a href="#"
-                            class="submenu-item flex items-center py-3 px-4 rounded-lg hover:bg-sidebar-hover transition-colors duration-200 text-gray-300 hover:text-white inactive"
+                        <a href=""
+                            class="submenu-item flex items-center py-3 px-4 rounded-lg hover:bg-slate-700 transition-colors duration-200 text-slate-300 hover:text-white @if(request()->routeIs('pasien.index')) active @else inactive @endif"
                             data-submenu="data-pasien">
                             <i class="fas fa-list-alt mr-3 text-base"></i>
                             <span>Data Pasien</span>
@@ -285,7 +257,7 @@
                 {{-- Bagian Layanan --}}
                 <div class="dropdown-group" data-menu-parent="layanan">
                     <button
-                        class="dropdown-toggle w-full flex items-center justify-between p-3 rounded-xl hover:bg-sidebar-hover transition-all duration-200 group inactive"
+                        class="dropdown-toggle w-full flex items-center justify-between p-3 rounded-xl hover:bg-slate-700 transition-all duration-200 group @if(request()->routeIs('layanan.*') || request()->routeIs('poliklinik.*') || request()->routeIs('obat.*')) active @else inactive @endif"
                         data-menu="layanan">
                         <div class="flex items-center space-x-4">
                             <i class="fas fa-clinic-medical text-xl w-8 text-center"></i>
@@ -294,39 +266,39 @@
                         <i
                             class="dropdown-arrow fas fa-chevron-down text-base transition-transform duration-300 rotate-0"></i>
                     </button>
-                    <div class="dropdown-content max-h-0 overflow-hidden dropdown-transition ml-12 mt-2 space-y-2">
-                        <a href="#"
-                            class="submenu-item flex items-center py-3 px-4 rounded-lg hover:bg-sidebar-hover transition-colors duration-200 text-gray-300 hover:text-white inactive"
+                    <div class="dropdown-content max-h-0 overflow-hidden dropdown-transition ml-12 mt-2 space-y-2 @if(request()->routeIs('layanan.*') || request()->routeIs('poliklinik.*') || request()->routeIs('obat.*')) !max-h-96 @endif">
+                        <a href=""
+                            class="submenu-item flex items-center py-3 px-4 rounded-lg hover:bg-slate-700 transition-colors duration-200 text-slate-300 hover:text-white @if(request()->routeIs('poliklinik.create')) active @else inactive @endif"
                             data-submenu="tambah-poliklinik">
                             <i class="fas fa-hospital mr-3 text-base"></i>
                             <span>Tambah Poliklinik</span>
                         </a>
-                        <a href="#"
-                            class="submenu-item flex items-center py-3 px-4 rounded-lg hover:bg-sidebar-hover transition-colors duration-200 text-gray-300 hover:text-white inactive"
+                        <a href=""
+                            class="submenu-item flex items-center py-3 px-4 rounded-lg hover:bg-slate-700 transition-colors duration-200 text-slate-300 hover:text-white @if(request()->routeIs('poliklinik.index')) active @else inactive @endif"
                             data-submenu="data-poliklinik">
                             <i class="fas fa-list mr-3 text-base"></i>
                             <span>Data Poliklinik</span>
                         </a>
-                        <a href="#"
-                            class="submenu-item flex items-center py-3 px-4 rounded-lg hover:bg-sidebar-hover transition-colors duration-200 text-gray-300 hover:text-white inactive"
+                        <a href=""
+                            class="submenu-item flex items-center py-3 px-4 rounded-lg hover:bg-slate-700 transition-colors duration-200 text-slate-300 hover:text-white @if(request()->routeIs('layanan.create')) active @else inactive @endif"
                             data-submenu="tambah-jenis-pelayanan">
                             <i class="fas fa-stethoscope mr-3 text-base"></i>
                             <span>Tambah Jenis Pelayanan</span>
                         </a>
-                        <a href="#"
-                            class="submenu-item flex items-center py-3 px-4 rounded-lg hover:bg-sidebar-hover transition-colors duration-200 text-gray-300 hover:text-white inactive"
+                        <a href=""
+                            class="submenu-item flex items-center py-3 px-4 rounded-lg hover:bg-slate-700 transition-colors duration-200 text-slate-300 hover:text-white @if(request()->routeIs('layanan.index')) active @else inactive @endif"
                             data-submenu="data-jenis-pelayanan">
                             <i class="fas fa-tasks mr-3 text-base"></i>
                             <span>Data Jenis Pelayanan</span>
                         </a>
-                        <a href="#"
-                            class="submenu-item flex items-center py-3 px-4 rounded-lg hover:bg-sidebar-hover transition-colors duration-200 text-gray-300 hover:text-white inactive"
+                        <a href=""
+                            class="submenu-item flex items-center py-3 px-4 rounded-lg hover:bg-slate-700 transition-colors duration-200 text-slate-300 hover:text-white @if(request()->routeIs('obat.create')) active @else inactive @endif"
                             data-submenu="tambah-obat">
                             <i class="fas fa-pills mr-3 text-base"></i>
                             <span>Tambah Obat</span>
                         </a>
-                        <a href="#"
-                            class="submenu-item flex items-center py-3 px-4 rounded-lg hover:bg-sidebar-hover transition-colors duration-200 text-gray-300 hover:text-white inactive"
+                        <a href=""
+                            class="submenu-item flex items-center py-3 px-4 rounded-lg hover:bg-slate-700 transition-colors duration-200 text-slate-300 hover:text-white @if(request()->routeIs('obat.index')) active @else inactive @endif"
                             data-submenu="data-obat">
                             <i class="fas fa-prescription-bottle mr-3 text-base"></i>
                             <span>Data Obat</span>
@@ -334,10 +306,9 @@
                     </div>
                 </div>
 
-
                 <!-- Logout Item -->
-                <a href="#"
-                    class="menu-item flex items-center space-x-4 p-3 rounded-xl hover:bg-red-900/30 hover:text-red-200 transition-all duration-200 group mt-10 inactive"
+                <a href="{{ route('logout') }}"
+                    class="menu-item flex items-center space-x-4 p-3 rounded-xl hover:bg-red-900/30 hover:text-red-200 transition-all duration-200 group mt-2 inactive"
                     data-menu="logout">
                     <i class="fas fa-sign-out-alt text-xl w-8 text-center"></i>
                     <span class="font-medium text-lg">Keluar</span>
@@ -346,7 +317,7 @@
         </div>
 
         <!-- Sidebar Footer - Diperbesar -->
-        <div class="p-5 border-t border-gray-700">
+        <div class="p-5 border-t border-slate-700">
             <div class="flex items-center space-x-4">
                 <div
                     class="w-12 h-12 rounded-full bg-gradient-to-br from-cyan-500 to-blue-500 flex items-center justify-center">
@@ -354,8 +325,8 @@
                 </div>
                 <div>
                     <p class="text-base font-medium">Dr. John Smith</p>
-                    <p class="text-sm text-gray-400">Administrator</p>
-                    <p class="text-xs text-gray-500 mt-1">Login: 08:00 AM</p>
+                    <p class="text-sm text-slate-400">Administrator</p>
+                    <p class="text-xs text-slate-500 mt-1">Login: 08:00 AM</p>
                 </div>
             </div>
         </div>
@@ -372,8 +343,8 @@
                     <nav class="flex mt-2" aria-label="Breadcrumb">
                         <ol class="inline-flex items-center space-x-1 md:space-x-3">
                             <li class="inline-flex items-center">
-                                <a href="{{ route('try') }}"
-                                    class="inline-flex items-center text-sm font-medium text-gray-700 hover:text-primary-600">
+                                <a href=""
+                                    class="inline-flex items-center text-sm font-medium text-gray-700 hover:text-blue-600">
                                     <i class="fas fa-home mr-2"></i>
                                     Beranda
                                 </a>
@@ -381,7 +352,7 @@
                             <li>
                                 <div class="flex items-center">
                                     <i class="fas fa-chevron-right text-gray-400 mx-2"></i>
-                                    <span class="ml-1 text-sm font-medium text-gray-500 md:ml-2">Dashboard</span>
+                                    <span class="ml-1 text-sm font-medium text-gray-500 md:ml-2">@yield('page-title','Dashboard')</span>
                                 </div>
                             </li>
                         </ol>
@@ -396,13 +367,13 @@
                             <i class="fas fa-search text-gray-400"></i>
                         </div>
                         <input type="text"
-                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full pl-10 p-2.5"
+                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full pl-10 p-2.5"
                             placeholder="Cari...">
                     </div>
 
                     <!-- Notification Bell -->
                     <button
-                        class="relative p-2 text-gray-600 hover:text-primary-600 hover:bg-gray-100 rounded-full transition-colors duration-200">
+                        class="relative p-2 text-gray-600 hover:text-blue-600 hover:bg-gray-100 rounded-full transition-colors duration-200">
                         <i class="fas fa-bell text-xl"></i>
                         <span
                             class="absolute top-0 right-0 inline-flex items-center justify-center px-2 py-1 text-xs font-bold leading-none text-white transform translate-x-1/2 -translate-y-1/2 bg-red-600 rounded-full">3</span>
@@ -413,7 +384,7 @@
                         <button
                             class="flex items-center space-x-3 p-2 hover:bg-gray-100 rounded-lg transition-colors duration-200">
                             <div
-                                class="w-10 h-10 rounded-full bg-gradient-to-br from-primary-500 to-cyan-400 flex items-center justify-center">
+                                class="w-10 h-10 rounded-full bg-gradient-to-br from-blue-500 to-cyan-400 flex items-center justify-center">
                                 <i class="fas fa-user text-white"></i>
                             </div>
                             <div class="hidden sm:block text-left">
@@ -427,23 +398,23 @@
                         <div
                             class="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-200 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 z-50">
                             <div class="py-1">
-                                <a href="#"
+                                <a href=""
                                     class="flex items-center px-4 py-3 text-sm text-gray-700 hover:bg-gray-100">
                                     <i class="fas fa-user-circle mr-3"></i>
                                     Profil Saya
                                 </a>
-                                <a href="#"
+                                <a href=""
                                     class="flex items-center px-4 py-3 text-sm text-gray-700 hover:bg-gray-100">
                                     <i class="fas fa-cog mr-3"></i>
                                     Pengaturan
                                 </a>
-                                <a href="#"
+                                <a href=""
                                     class="flex items-center px-4 py-3 text-sm text-gray-700 hover:bg-gray-100">
                                     <i class="fas fa-question-circle mr-3"></i>
                                     Bantuan
                                 </a>
                                 <hr class="my-1 border-gray-200">
-                                <a href="#"
+                                <a href=""
                                     class="flex items-center px-4 py-3 text-sm text-red-600 hover:bg-red-50">
                                     <i class="fas fa-sign-out-alt mr-3"></i>
                                     Keluar
@@ -556,6 +527,17 @@
                 const menuType = sessionStorage.getItem('activeMenuType');
                 const menuValue = sessionStorage.getItem('activeMenuValue');
                 
+                // Jika baru login atau logout, reset ke beranda
+                const isNewSession = !sessionStorage.getItem('isLoggedIn');
+                if (isNewSession) {
+                    sessionStorage.setItem('isLoggedIn', 'true');
+                    // Clear menu yang disimpan sebelumnya
+                    sessionStorage.removeItem('activeMenuType');
+                    sessionStorage.removeItem('activeMenuValue');
+                    setActiveMenu('menu', 'beranda');
+                    return;
+                }
+                
                 if (menuType && menuValue) {
                     setActiveMenu(menuType, menuValue);
                 } else {
@@ -587,6 +569,18 @@
                 toggle.addEventListener('click', function(e) {
                     // Hanya untuk toggle dropdown, tidak mengubah status aktif
                     e.stopPropagation();
+                    
+                    // Jika dropdown ini sedang aktif (berdasarkan route), jangan toggle
+                    if (!this.classList.contains('active')) {
+                        const content = this.nextElementSibling;
+                        const arrow = this.querySelector('.dropdown-arrow');
+                        
+                        if (content && arrow) {
+                            content.classList.toggle('max-h-96');
+                            content.classList.toggle('max-h-0');
+                            arrow.classList.toggle('rotate-180');
+                        }
+                    }
                 });
             });
             
@@ -601,6 +595,14 @@
                 const content = group.querySelector('.dropdown-content');
                 const arrow = group.querySelector('.dropdown-arrow');
 
+                // Cek apakah dropdown harus dibuka berdasarkan route aktif
+                if (content && content.classList.contains('!max-h-96')) {
+                    content.classList.remove('max-h-0');
+                    content.classList.add('max-h-96');
+                    if (arrow) arrow.classList.remove('rotate-0');
+                    if (arrow) arrow.classList.add('rotate-180');
+                }
+
                 toggle.addEventListener('click', (e) => {
                     e.preventDefault();
                     e.stopPropagation();
@@ -608,9 +610,13 @@
                     // Tutup dropdown lain (agar tidak menumpuk terbuka)
                     dropdownGroups.forEach(other => {
                         if (other !== group) {
-                            other.querySelector('.dropdown-content').classList.add('max-h-0');
-                            other.querySelector('.dropdown-content').classList.remove('max-h-96');
-                            other.querySelector('.dropdown-arrow').classList.remove('rotate-180');
+                            const otherContent = other.querySelector('.dropdown-content');
+                            const otherArrow = other.querySelector('.dropdown-arrow');
+                            if (otherContent && otherArrow) {
+                                otherContent.classList.add('max-h-0');
+                                otherContent.classList.remove('max-h-96');
+                                otherArrow.classList.remove('rotate-180');
+                            }
                         }
                     });
 
@@ -639,18 +645,71 @@
                         const content = group.querySelector('.dropdown-content');
                         const arrow = group.querySelector('.dropdown-arrow');
                         
-                        if (content && content.classList.contains('max-h-96')) {
-                            content.classList.remove('max-h-96');
-                            content.classList.add('max-h-0');
-                            if (arrow) arrow.classList.remove('rotate-180');
+                        // Jangan tutup dropdown jika menu aktif
+                        const toggle = group.querySelector('.dropdown-toggle');
+                        if (toggle && !toggle.classList.contains('active')) {
+                            if (content && content.classList.contains('max-h-96')) {
+                                content.classList.remove('max-h-96');
+                                content.classList.add('max-h-0');
+                                if (arrow) arrow.classList.remove('rotate-180');
+                            }
                         }
                     });
                 }
             });
 
+            //========= LOGOUT HANDLER ==========
+            // Saat logout, reset session storage
+            document.querySelector('a[href="{{ route('logout') }}"]')?.addEventListener('click', function(e) {
+                e.preventDefault();
+                
+                // Tampilkan konfirmasi logout
+                Swal.fire({
+                    title: 'Konfirmasi Logout',
+                    text: 'Apakah Anda yakin ingin keluar?',
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'Ya, Keluar',
+                    cancelButtonText: 'Batal'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        // Reset session storage untuk menu
+                        sessionStorage.removeItem('isLoggedIn');
+                        sessionStorage.removeItem('activeMenuType');
+                        sessionStorage.removeItem('activeMenuValue');
+                        
+                        // Redirect ke halaman logout
+                        window.location.href = this.href;
+                    }
+                });
+            });
+
         });
     </script>
-
+    <script src="path/to/chartjs/dist/chart.umd.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    @if(session('login_success'))
+        <script>
+            Swal.fire({
+                icon: 'success',
+                title: 'Login Berhasil',
+                text: "{{ session('login_success') }}",
+                timer: 2500,
+                showConfirmButton: false
+            })
+        </script>
+    @endif
+    @if(session('login_failed'))
+        <script>
+            Swal.fire({
+                icon: 'error',
+                title: 'Login Gagal!',
+                text: "{{ session('login_failed') }}",
+            })
+        </script>
+    @endif
     @stack('scripts')
 </body>
 </html>
