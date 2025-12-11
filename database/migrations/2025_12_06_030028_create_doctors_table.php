@@ -15,7 +15,8 @@ return new class extends Migration
             $table->id();
             $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
             $table->string('nama');
-            $table->string('spesialisasi');
+            $table->foreignId('poliklinik_id')->constrained('polikliniks')->onDelete('cascade');
+            $table->integer('tarif_konsultasi')->nullable();
             $table->integer('lama_pengalaman')->nullable();
             $table->string('pendidikan')->nullable();
             $table->string('nomor_telpon')->nullable();

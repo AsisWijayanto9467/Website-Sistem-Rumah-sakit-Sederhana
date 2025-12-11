@@ -348,13 +348,13 @@
                             class="dropdown-arrow fas fa-chevron-down text-base transition-transform duration-300 rotate-0"></i>
                     </button>
                     <div class="dropdown-content max-h-0 overflow-hidden dropdown-transition ml-12 mt-2 space-y-2">
-                        <a href="{{ route('services.create') }}"
+                        <a href="{{ route('poliklinik.create') }}"
                             class="submenu-item flex items-center py-3 px-4 rounded-lg hover:bg-slate-700 transition-colors duration-200 text-slate-300 hover:text-white inactive"
                             data-submenu="tambah-poliklinik" data-route="poliklinik.create">
                             <i class="fas fa-hospital mr-3 text-base"></i>
                             <span>Tambah Poliklinik</span>
                         </a>
-                        <a href="{{ route('services.create') }}"
+                        <a href="{{ route('poliklinik.index') }}"
                             class="submenu-item flex items-center py-3 px-4 rounded-lg hover:bg-slate-700 transition-colors duration-200 text-slate-300 hover:text-white inactive"
                             data-submenu="data-poliklinik" data-route="poliklinik.index">
                             <i class="fas fa-list mr-3 text-base"></i>
@@ -372,13 +372,13 @@
                             <i class="fas fa-tasks mr-3 text-base"></i>
                             <span>Data Jenis Pelayanan</span>
                         </a>
-                        <a href="{{ route('services.create') }}"
+                        <a href="{{ route('medication.create') }}"
                             class="submenu-item flex items-center py-3 px-4 rounded-lg hover:bg-slate-700 transition-colors duration-200 text-slate-300 hover:text-white inactive"
                             data-submenu="tambah-obat" data-route="obat.create">
                             <i class="fas fa-pills mr-3 text-base"></i>
                             <span>Tambah Obat</span>
                         </a>
-                        <a href="{{ route('services.create') }}"
+                        <a href="{{ route('medication.index') }}"
                             class="submenu-item flex items-center py-3 px-4 rounded-lg hover:bg-slate-700 transition-colors duration-200 text-slate-300 hover:text-white inactive"
                             data-submenu="data-obat" data-route="obat.index">
                             <i class="fas fa-prescription-bottle mr-3 text-base"></i>
@@ -500,6 +500,7 @@
     </div>
 
     <!-- JavaScript for Interactive Features -->
+    
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             //======= SIDEBAR MOBILE TOGGLE ==========
@@ -844,8 +845,27 @@
             }
         });
     </script>
-
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     @stack('scripts')
+
+    @if(session('login_success'))
+        <script>
+            Swal.fire({
+                icon: 'success',
+                title: 'Login Berhasil',
+                text: "{{ session('login_success') }}",
+            })
+        </script>
+    @endif
+
+    @if(session('success'))
+        <script>
+            Swal.fire({
+                icon: 'success',
+                title: 'Proses Berhasil',
+                text: "{{ session('success') }}",
+            })
+        </script>
+    @endif
 </body>
 </html>

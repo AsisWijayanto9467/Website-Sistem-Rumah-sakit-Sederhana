@@ -5,7 +5,9 @@ use App\Http\Controllers\BerandaController;
 use App\Http\Controllers\DetailKunjunganController;
 use App\Http\Controllers\DokterController;
 use App\Http\Controllers\KunjunganController;
+use App\Http\Controllers\MedicationController;
 use App\Http\Controllers\PasienController;
+use App\Http\Controllers\PoliklinikController;
 use App\Http\Controllers\ServiceController;
 use Illuminate\Support\Facades\Route;
 
@@ -24,6 +26,23 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/admin/pasien/{id}',[PasienController::class, 'edit'])->name('pasien.edit');
     Route::put('/admin/pasien/{id}',[PasienController::class, 'update'])->name('pasien.update');
     Route::delete('/admin/pasien/{id}',[PasienController::class, 'destroy'])->name('pasien.destroy');
+
+    // Halaman poliklinik
+    Route::get('/admin/poliklinik',[PoliklinikController::class, 'index'])->name( 'poliklinik.index');
+    Route::get('/admin/poliklinik/create',[PoliklinikController::class, 'create'])->name('poliklinik.create');
+    Route::post('/admin/poliklinik',[PoliklinikController::class, 'store'])->name('poliklinik.store');
+    Route::get('/admin/poliklinik/{id}',[PoliklinikController::class, 'show'])->name('poliklinik.show');
+    Route::get('/admin/poliklinik/{id}',[PoliklinikController::class, 'edit'])->name('poliklinik.edit');
+    Route::put('/admin/poliklinik/{id}',[PoliklinikController::class, 'update'])->name('poliklinik.update');
+    Route::delete('/admin/poliklinik/{id}',[PoliklinikController::class, 'destroy'])->name('poliklinik.destroy');
+
+    // Halaman poliklinik
+    Route::get('/admin/Medicine',[MedicationController::class, 'index'])->name('medication.index');
+    Route::get('/admin/Medicine/create',[MedicationController::class, 'create'])->name('medication.create');
+    Route::post('/admin/Medicine',[MedicationController::class, 'store'])->name('medication.store');
+    Route::get('/admin/Medicine/{id}',[MedicationController::class, 'edit'])->name('medication.edit');
+    Route::put('/admin/Medicine/{id}',[MedicationController::class, 'update'])->name('medication.update');
+    Route::delete('/admin/Medicine/{id}',[MedicationController::class, 'destroy'])->name('medication.destroy');
 
     // Halaman pasien
     Route::get('/admin/dokter',[DokterController::class, 'index'])->name('dokter.index');

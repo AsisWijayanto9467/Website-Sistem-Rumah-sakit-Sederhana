@@ -15,11 +15,12 @@ return new class extends Migration
             $table->id();
             $table->foreignId('patient_id')->constrained('patients')->onDelete('cascade');
             $table->foreignId('doctor_id')->constrained('doctors')->onDelete('cascade');
-            $table->foreignId('service_id')->constrained('services')->onDelete('cascade');
+            $table->foreignId('poliklinik_id')->constrained('polikliniks')->onDelete('cascade');
             $table->date('tanggal_kunjungan');
             $table->time('waktu_kunjungan');
-            $table->text('complaint')->nullable();
-            $table->enum('status', ['pending', 'approved', 'completed'])->default('pending');
+            $table->text('Alasan')->nullable();
+            $table->enum('status', ['aktif', 'tidak aktif'])->default('aktif');
+            $table->enum('aksi', ['pending', 'approved', 'not approved'])->default('pending');
             $table->timestamps();
         });
     }

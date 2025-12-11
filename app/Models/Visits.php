@@ -11,11 +11,12 @@ class Visits extends Model
     protected $fillable = [
         'patient_id',
         'doctor_id',
-        'service_id',
+        'poliklinik_id',
         'tanggal_kunjungan',
         'waktu_kunjungan',
-        'complaint',
+        'Alasan',
         'status',
+        'aksi',
     ];
 
     protected $casts = [
@@ -30,8 +31,8 @@ class Visits extends Model
     public function doctor() {
         return $this->belongsTo(Doctors::class);
     }
-    public function service() {
-        return $this->belongsTo(Services::class);
+    public function poliklinik() {
+        return $this->belongsTo(Poliklinik::class);
     }
 
     public function details() {

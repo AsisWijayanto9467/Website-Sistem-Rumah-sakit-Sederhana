@@ -10,10 +10,30 @@ class MedicationController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $obat = Medications::orderBy('id', 'DESC')->get();
-        return view('layanan.service.index', compact('obat'));
+        $search = $request->input('search');
+        $perPage = $request->input('per_page', 10);
+        $query = Medications::query();
+
+        if($search) {
+            $query->where(function($q) use ($search) {
+                $q  ->where('nama',  'LIKE', "%{$search}")
+                    ->orWhere('harga', 'LIKE', "%{$search}")
+                    ->orWhere('deskripsi', 'LIKE', "%{$search}")
+                    ->orWhere('stock', 'LIKE', "%{$search}");
+            });
+        }
+
+        $medications = $query->latest()->paginate($perPage);
+        if($search) {
+            $medications->appends(['search' => $search]);
+        }
+        if($request->has('per_page')) {
+            $medications->appends(['per_page' => $perPage]);
+        }
+
+        return view('layanan.Obat.index', compact('medications', 'search'));
     }
 
     /**
@@ -21,7 +41,7 @@ class MedicationController extends Controller
      */
     public function create()
     {
-        return view('layanan.service.create');
+        return view('layanan.obat.create');
     }
 
     /**

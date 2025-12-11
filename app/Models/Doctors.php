@@ -11,12 +11,19 @@ class Doctors extends Model
     protected $fillable = [
         'user_id',
         'nama',
-        'spesialisasi',
+        'poliklinik_id',
+        'tarif_konsultasi',
         'lama_pengalaman',
         'pendidikan',
         'nomor_telpon',
         'status'
     ];
+
+
+    
+    public function poliklinik() {
+        return $this->belongsTo(Poliklinik::class);
+    }
 
     public function user() {
         return $this->belongsTo(User::class);
