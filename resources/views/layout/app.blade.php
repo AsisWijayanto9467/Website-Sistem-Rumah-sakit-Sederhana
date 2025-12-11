@@ -51,32 +51,55 @@
             /* 384px */
         }
 
-        /* CSS untuk menu aktif */
+        /* CSS untuk menu aktif - Warna lebih spesifik */
         .menu-item.active {
             background-color: #3b82f6 !important;
             color: white !important;
         }
-        
+
+        .menu-item.active:hover {
+            background-color: #2563eb !important;
+        }
+
         .menu-item.inactive {
             background-color: transparent !important;
         }
-        
+
         .dropdown-toggle.active {
             background-color: #3b82f6 !important;
             color: white !important;
         }
-        
+
+        .dropdown-toggle.active:hover {
+            background-color: #2563eb !important;
+        }
+
+        .dropdown-toggle.active .dropdown-arrow {
+            color: white !important;
+        }
+
         .dropdown-toggle.inactive {
             background-color: transparent !important;
         }
-        
+
         .submenu-item.active {
-            background-color: #334155 !important;
+            background-color: #475569 !important; /* Gray yang lebih terang */
             color: white !important;
+            border-left: 3px solid #3b82f6;
         }
-        
+
+        .submenu-item.active:hover {
+            background-color: #4b5563 !important;
+        }
+
         .submenu-item.inactive {
             background-color: transparent !important;
+            color: #cbd5e1 !important;
+        }
+
+        .submenu-item.inactive:hover {
+            background-color: #334155 !important;
+            color: white !important;
         }
 
         /* Animasi fadeIn */
@@ -84,6 +107,7 @@
             from {
                 opacity: 0;
             }
+
             to {
                 opacity: 1;
             }
@@ -95,6 +119,7 @@
                 transform: translateY(-10px);
                 opacity: 0;
             }
+
             to {
                 transform: translateY(0);
                 opacity: 1;
@@ -107,6 +132,7 @@
                 transform: translateY(0);
                 opacity: 1;
             }
+
             to {
                 transform: translateY(-10px);
                 opacity: 0;
@@ -124,12 +150,66 @@
         .animate-slideUp {
             animation: slideUp 0.3s ease-out;
         }
+
+        /* ========= PERBAIKAN UTAMA ========= */
+        /* Membuat body dan html full height */
+        html, body {
+            height: 100%;
+            overflow: hidden; /* Mencegah scroll global */
+        }
+        
+        /* Container utama dengan scroll internal */
+        .main-content-container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden; /* Kontainer utama tidak scroll */
+        }
+        
+        /* Area konten yang bisa di-scroll */
+        .scrollable-content {
+            flex: 1;
+            overflow-y: auto;
+        }
+        
+        /* Sidebar fixed full height */
+        .sidebar-fixed {
+            height: 100vh;
+            position: fixed;
+            top: 0;
+            left: 0;
+        }
+        
+        /* Untuk desktop - sidebar tetap, konten scroll */
+        @media (min-width: 1024px) {
+            .desktop-layout {
+                height: 100vh;
+                overflow: hidden;
+            }
+        }
+
+        html, body {
+            height: 100%;
+            overflow: hidden; 
+        }
+
+        .main-content-container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden; 
+        }
+
+        .scrollable-content {
+            flex: 1;
+            overflow-y: auto; 
+        }
     </style>
 
     @stack('styles')
 </head>
 
-<body class="bg-gray-50 text-gray-800 min-h-screen flex">
+<body class="bg-gray-50 text-gray-800 min-h-screen flex desktop-layout">
     <!-- Toggle Button for Mobile (Hidden on Desktop) -->
     <button id="sidebarToggle"
         class="lg:hidden fixed top-3 left-4 z-50 bg-blue-600 text-white p-3 rounded-lg shadow-lg hover:bg-blue-700 transition-colors duration-200">
@@ -140,26 +220,27 @@
     <aside id="sidebar"
         class="bg-slate-800 text-slate-100 w-80 min-h-screen flex flex-col shadow-xl transition-all duration-300 fixed lg:static z-40 -translate-x-full lg:translate-x-0">
         <!-- Sidebar Header - Diperbesar -->
-        <div class="p-7 border-b border-slate-700 flex items-center space-x-4">
-            <div
-                class="w-12 h-12 rounded-lg bg-gradient-to-br from-blue-500 to-cyan-400 flex items-center justify-center">
-                <i class="fas fa-hospital text-white text-2xl"></i>
-            </div>
-            <div>
-                <h1
-                    class="text-2xl font-bold bg-gradient-to-r from-blue-400 to-cyan-300 bg-clip-text text-transparent">
-                    Menu Utama</h1>
-                <p class="text-xs text-slate-400 mt-1">Management System</p>
+        <div class="p-7 border-b border-slate-700 flex-shrink-0">
+            <div class="flex items-center space-x-4">
+                <div
+                    class="w-12 h-12 rounded-lg bg-gradient-to-br from-blue-500 to-cyan-400 flex items-center justify-center">
+                    <i class="fas fa-hospital text-white text-2xl"></i>
+                </div>
+                <div>
+                    <h1 class="text-2xl font-bold bg-gradient-to-r from-blue-400 to-cyan-300 bg-clip-text text-transparent">
+                        Menu Utama</h1>
+                    <p class="text-xs text-slate-400 mt-1">Management System</p>
+                </div>
             </div>
         </div>
 
-        <!-- Sidebar Menu -->
+        <!-- Sidebar Menu - Bagian ini bisa discroll -->
         <div class="flex-1 overflow-y-auto sidebar-scrollbar p-5">
             <nav class="space-y-2">
                 <!-- Dashboard Item -->
-                <a href=""
-                    class="menu-item flex items-center space-x-4 p-3 rounded-xl hover:bg-slate-700 transition-all duration-200 group @if(request()->routeIs('dashboard')) active @else inactive @endif"
-                    data-menu="beranda">
+                <a href="{{ route('admin.beranda') }}"
+                    class="menu-item flex items-center space-x-4 p-3 rounded-xl hover:bg-slate-700 transition-all duration-200 group"
+                    data-menu="beranda" data-route="dashboard">
                     <i class="fas fa-home text-xl w-8 text-center"></i>
                     <span class="font-medium text-lg">Beranda</span>
                 </a>
@@ -167,8 +248,8 @@
                 {{-- Bagian Kunjungan --}}
                 <div class="dropdown-group" data-menu-parent="kunjungan">
                     <button
-                        class="dropdown-toggle w-full flex items-center justify-between p-3 rounded-xl hover:bg-slate-700 transition-all duration-200 group @if(request()->routeIs('kunjungan.*')) active @else inactive @endif"
-                        data-menu="kunjungan">
+                        class="dropdown-toggle w-full flex items-center justify-between p-3 rounded-xl hover:bg-slate-700 transition-all duration-200 group inactive"
+                        data-menu="kunjungan" data-route-prefix="kunjungan">
                         <div class="flex items-center space-x-4">
                             <i class="fas fa-calendar-check text-xl w-8 text-center"></i>
                             <span class="font-medium text-lg">Kunjungan</span>
@@ -176,22 +257,22 @@
                         <i
                             class="dropdown-arrow fas fa-chevron-down text-base transition-transform duration-300 rotate-0"></i>
                     </button>
-                    <div class="dropdown-content max-h-0 overflow-hidden dropdown-transition ml-12 mt-2 space-y-2 @if(request()->routeIs('kunjungan.*')) !max-h-96 @endif">
-                        <a href=""
-                            class="submenu-item flex items-center py-3 px-4 rounded-lg hover:bg-slate-700 transition-colors duration-200 text-slate-300 hover:text-white @if(request()->routeIs('kunjungan.create')) active @else inactive @endif"
-                            data-submenu="tambah-kunjungan">
+                    <div class="dropdown-content max-h-0 overflow-hidden dropdown-transition ml-12 mt-2 space-y-2">
+                        <a href="{{ route('kunjungan.create') }}"
+                            class="submenu-item flex items-center py-3 px-4 rounded-lg hover:bg-slate-700 transition-colors duration-200 text-slate-300 hover:text-white inactive"
+                            data-submenu="tambah-kunjungan" data-route="kunjungan.create">
                             <i class="fas fa-calendar-plus mr-3 text-base"></i>
                             <span>Tambah Kunjungan</span>
                         </a>
-                        <a href=""
-                            class="submenu-item flex items-center py-3 px-4 rounded-lg hover:bg-slate-700 transition-colors duration-200 text-slate-300 hover:text-white @if(request()->routeIs('kunjungan.pending')) active @else inactive @endif"
-                            data-submenu="kunjungan-tertunda">
+                        <a href="{{ route('kunjungan.pending') }}"
+                            class="submenu-item flex items-center py-3 px-4 rounded-lg hover:bg-slate-700 transition-colors duration-200 text-slate-300 hover:text-white inactive"
+                            data-submenu="kunjungan-tertunda" data-route="kunjungan.pending">
                             <i class="fas fa-clock mr-3 text-base"></i>
                             <span>Kunjungan Tertunda</span>
                         </a>
-                        <a href=""
-                            class="submenu-item flex items-center py-3 px-4 rounded-lg hover:bg-slate-700 transition-colors duration-200 text-slate-300 hover:text-white @if(request()->routeIs('kunjungan.approved')) active @else inactive @endif"
-                            data-submenu="kunjungan-disetujui">
+                        <a href="{{ route('kunjungan.completed') }}"
+                            class="submenu-item flex items-center py-3 px-4 rounded-lg hover:bg-slate-700 transition-colors duration-200 text-slate-300 hover:text-white inactive"
+                            data-submenu="kunjungan-disetujui" data-route="kunjungan.completed">
                             <i class="fas fa-check-circle mr-3 text-base"></i>
                             <span>Kunjungan Disetujui</span>
                         </a>
@@ -201,8 +282,8 @@
                 {{-- Bagian Dokter --}}
                 <div class="dropdown-group" data-menu-parent="dokter">
                     <button
-                        class="dropdown-toggle w-full flex items-center justify-between p-3 rounded-xl hover:bg-slate-700 transition-all duration-200 group @if(request()->routeIs('dokter.*')) active @else inactive @endif"
-                        data-menu="dokter">
+                        class="dropdown-toggle w-full flex items-center justify-between p-3 rounded-xl hover:bg-slate-700 transition-all duration-200 group inactive"
+                        data-menu="dokter" data-route-prefix="dokter">
                         <div class="flex items-center space-x-4">
                             <i class="fas fa-user-md text-xl w-8 text-center"></i>
                             <span class="font-medium text-lg">Dokter</span>
@@ -210,16 +291,16 @@
                         <i
                             class="dropdown-arrow fas fa-chevron-down text-base transition-transform duration-300 rotate-0"></i>
                     </button>
-                    <div class="dropdown-content max-h-0 overflow-hidden dropdown-transition ml-12 mt-2 space-y-2 @if(request()->routeIs('dokter.*')) !max-h-96 @endif">
-                        <a href=""
-                            class="submenu-item flex items-center py-3 px-4 rounded-lg hover:bg-slate-700 transition-colors duration-200 text-slate-300 hover:text-white @if(request()->routeIs('dokter.create')) active @else inactive @endif"
-                            data-submenu="tambah-dokter">
+                    <div class="dropdown-content max-h-0 overflow-hidden dropdown-transition ml-12 mt-2 space-y-2">
+                        <a href="{{ route('dokter.create') }}"
+                            class="submenu-item flex items-center py-3 px-4 rounded-lg hover:bg-slate-700 transition-colors duration-200 text-slate-300 hover:text-white inactive"
+                            data-submenu="tambah-dokter" data-route="dokter.create">
                             <i class="fas fa-user-plus mr-3 text-base"></i>
                             <span>Tambah Dokter</span>
                         </a>
-                        <a href=""
-                            class="submenu-item flex items-center py-3 px-4 rounded-lg hover:bg-slate-700 transition-colors duration-200 text-slate-300 hover:text-white @if(request()->routeIs('dokter.index')) active @else inactive @endif"
-                            data-submenu="data-dokter">
+                        <a href="{{ route('dokter.index') }}"
+                            class="submenu-item flex items-center py-3 px-4 rounded-lg hover:bg-slate-700 transition-colors duration-200 text-slate-300 hover:text-white inactive"
+                            data-submenu="data-dokter" data-route="dokter.index">
                             <i class="fas fa-list-alt mr-3 text-base"></i>
                             <span>Data Dokter</span>
                         </a>
@@ -229,8 +310,8 @@
                 {{-- Bagian Pasien --}}
                 <div class="dropdown-group" data-menu-parent="pasien">
                     <button
-                        class="dropdown-toggle w-full flex items-center justify-between p-3 rounded-xl hover:bg-slate-700 transition-all duration-200 group @if(request()->routeIs('pasien.*')) active @else inactive @endif"
-                        data-menu="pasien">
+                        class="dropdown-toggle w-full flex items-center justify-between p-3 rounded-xl hover:bg-slate-700 transition-all duration-200 group inactive"
+                        data-menu="pasien" data-route-prefix="pasien">
                         <div class="flex items-center space-x-4">
                             <i class="fas fa-user-injured text-xl w-8 text-center"></i>
                             <span class="font-medium text-lg">Pasien</span>
@@ -238,16 +319,16 @@
                         <i
                             class="dropdown-arrow fas fa-chevron-down text-base transition-transform duration-300 rotate-0"></i>
                     </button>
-                    <div class="dropdown-content max-h-0 overflow-hidden dropdown-transition ml-12 mt-2 space-y-2 @if(request()->routeIs('pasien.*')) !max-h-96 @endif">
-                        <a href=""
-                            class="submenu-item flex items-center py-3 px-4 rounded-lg hover:bg-slate-700 transition-colors duration-200 text-slate-300 hover:text-white @if(request()->routeIs('pasien.create')) active @else inactive @endif"
-                            data-submenu="tambah-pasien">
+                    <div class="dropdown-content max-h-0 overflow-hidden dropdown-transition ml-12 mt-2 space-y-2">
+                        <a href="{{ route('pasien.create') }}"
+                            class="submenu-item flex items-center py-3 px-4 rounded-lg hover:bg-slate-700 transition-colors duration-200 text-slate-300 hover:text-white inactive"
+                            data-submenu="tambah-pasien" data-route="pasien.create">
                             <i class="fas fa-user-plus mr-3 text-base"></i>
                             <span>Tambah Pasien</span>
                         </a>
-                        <a href=""
-                            class="submenu-item flex items-center py-3 px-4 rounded-lg hover:bg-slate-700 transition-colors duration-200 text-slate-300 hover:text-white @if(request()->routeIs('pasien.index')) active @else inactive @endif"
-                            data-submenu="data-pasien">
+                        <a href="{{ route('pasien.index') }}"
+                            class="submenu-item flex items-center py-3 px-4 rounded-lg hover:bg-slate-700 transition-colors duration-200 text-slate-300 hover:text-white inactive"
+                            data-submenu="data-pasien" data-route="pasien.index">
                             <i class="fas fa-list-alt mr-3 text-base"></i>
                             <span>Data Pasien</span>
                         </a>
@@ -257,8 +338,8 @@
                 {{-- Bagian Layanan --}}
                 <div class="dropdown-group" data-menu-parent="layanan">
                     <button
-                        class="dropdown-toggle w-full flex items-center justify-between p-3 rounded-xl hover:bg-slate-700 transition-all duration-200 group @if(request()->routeIs('layanan.*') || request()->routeIs('poliklinik.*') || request()->routeIs('obat.*')) active @else inactive @endif"
-                        data-menu="layanan">
+                        class="dropdown-toggle w-full flex items-center justify-between p-3 rounded-xl hover:bg-slate-700 transition-all duration-200 group inactive"
+                        data-menu="layanan" data-route-prefix="layanan,poliklinik,obat">
                         <div class="flex items-center space-x-4">
                             <i class="fas fa-clinic-medical text-xl w-8 text-center"></i>
                             <span class="font-medium text-lg">Layanan</span>
@@ -266,40 +347,40 @@
                         <i
                             class="dropdown-arrow fas fa-chevron-down text-base transition-transform duration-300 rotate-0"></i>
                     </button>
-                    <div class="dropdown-content max-h-0 overflow-hidden dropdown-transition ml-12 mt-2 space-y-2 @if(request()->routeIs('layanan.*') || request()->routeIs('poliklinik.*') || request()->routeIs('obat.*')) !max-h-96 @endif">
-                        <a href=""
-                            class="submenu-item flex items-center py-3 px-4 rounded-lg hover:bg-slate-700 transition-colors duration-200 text-slate-300 hover:text-white @if(request()->routeIs('poliklinik.create')) active @else inactive @endif"
-                            data-submenu="tambah-poliklinik">
+                    <div class="dropdown-content max-h-0 overflow-hidden dropdown-transition ml-12 mt-2 space-y-2">
+                        <a href="{{ route('services.create') }}"
+                            class="submenu-item flex items-center py-3 px-4 rounded-lg hover:bg-slate-700 transition-colors duration-200 text-slate-300 hover:text-white inactive"
+                            data-submenu="tambah-poliklinik" data-route="poliklinik.create">
                             <i class="fas fa-hospital mr-3 text-base"></i>
                             <span>Tambah Poliklinik</span>
                         </a>
-                        <a href=""
-                            class="submenu-item flex items-center py-3 px-4 rounded-lg hover:bg-slate-700 transition-colors duration-200 text-slate-300 hover:text-white @if(request()->routeIs('poliklinik.index')) active @else inactive @endif"
-                            data-submenu="data-poliklinik">
+                        <a href="{{ route('services.create') }}"
+                            class="submenu-item flex items-center py-3 px-4 rounded-lg hover:bg-slate-700 transition-colors duration-200 text-slate-300 hover:text-white inactive"
+                            data-submenu="data-poliklinik" data-route="poliklinik.index">
                             <i class="fas fa-list mr-3 text-base"></i>
                             <span>Data Poliklinik</span>
                         </a>
-                        <a href=""
-                            class="submenu-item flex items-center py-3 px-4 rounded-lg hover:bg-slate-700 transition-colors duration-200 text-slate-300 hover:text-white @if(request()->routeIs('layanan.create')) active @else inactive @endif"
-                            data-submenu="tambah-jenis-pelayanan">
+                        <a href="{{ route('services.create') }}"
+                            class="submenu-item flex items-center py-3 px-4 rounded-lg hover:bg-slate-700 transition-colors duration-200 text-slate-300 hover:text-white inactive"
+                            data-submenu="tambah-jenis-pelayanan" data-route="layanan.create">
                             <i class="fas fa-stethoscope mr-3 text-base"></i>
                             <span>Tambah Jenis Pelayanan</span>
                         </a>
-                        <a href=""
-                            class="submenu-item flex items-center py-3 px-4 rounded-lg hover:bg-slate-700 transition-colors duration-200 text-slate-300 hover:text-white @if(request()->routeIs('layanan.index')) active @else inactive @endif"
-                            data-submenu="data-jenis-pelayanan">
+                        <a href="{{ route('services.create') }}"
+                            class="submenu-item flex items-center py-3 px-4 rounded-lg hover:bg-slate-700 transition-colors duration-200 text-slate-300 hover:text-white inactive"
+                            data-submenu="data-jenis-pelayanan" data-route="layanan.index">
                             <i class="fas fa-tasks mr-3 text-base"></i>
                             <span>Data Jenis Pelayanan</span>
                         </a>
-                        <a href=""
-                            class="submenu-item flex items-center py-3 px-4 rounded-lg hover:bg-slate-700 transition-colors duration-200 text-slate-300 hover:text-white @if(request()->routeIs('obat.create')) active @else inactive @endif"
-                            data-submenu="tambah-obat">
+                        <a href="{{ route('services.create') }}"
+                            class="submenu-item flex items-center py-3 px-4 rounded-lg hover:bg-slate-700 transition-colors duration-200 text-slate-300 hover:text-white inactive"
+                            data-submenu="tambah-obat" data-route="obat.create">
                             <i class="fas fa-pills mr-3 text-base"></i>
                             <span>Tambah Obat</span>
                         </a>
-                        <a href=""
-                            class="submenu-item flex items-center py-3 px-4 rounded-lg hover:bg-slate-700 transition-colors duration-200 text-slate-300 hover:text-white @if(request()->routeIs('obat.index')) active @else inactive @endif"
-                            data-submenu="data-obat">
+                        <a href="{{ route('services.create') }}"
+                            class="submenu-item flex items-center py-3 px-4 rounded-lg hover:bg-slate-700 transition-colors duration-200 text-slate-300 hover:text-white inactive"
+                            data-submenu="data-obat" data-route="obat.index">
                             <i class="fas fa-prescription-bottle mr-3 text-base"></i>
                             <span>Data Obat</span>
                         </a>
@@ -315,31 +396,16 @@
                 </a>
             </nav>
         </div>
-
-        <!-- Sidebar Footer - Diperbesar -->
-        <div class="p-5 border-t border-slate-700">
-            <div class="flex items-center space-x-4">
-                <div
-                    class="w-12 h-12 rounded-full bg-gradient-to-br from-cyan-500 to-blue-500 flex items-center justify-center">
-                    <i class="fas fa-user-md text-white text-lg"></i>
-                </div>
-                <div>
-                    <p class="text-base font-medium">Dr. John Smith</p>
-                    <p class="text-sm text-slate-400">Administrator</p>
-                    <p class="text-xs text-slate-500 mt-1">Login: 08:00 AM</p>
-                </div>
-            </div>
-        </div>
     </aside>
 
     <!-- Main Content -->
-    <main class="flex-1 min-h-screen">
+    <div class="main-content-container flex-1">
         <!-- Header -->
-        <header class="bg-white shadow-md border-b border-gray-200 sticky top-0 z-30">
+        <header class="bg-white shadow-md border-b border-gray-200 sticky top-0 z-30 flex-shrink-0">
             <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between p-6">
                 <!-- Page Title and Breadcrumb -->
                 <div class="mb-4 sm:mb-0">
-                    <h1 class="text-2xl sm:text-3xl font-bold text-gray-800">@yield('title','Dashboard')</h1>
+                    <h1 class="text-2xl sm:text-3xl font-bold text-gray-800">@yield('title', 'Dashboard')</h1>
                     <nav class="flex mt-2" aria-label="Breadcrumb">
                         <ol class="inline-flex items-center space-x-1 md:space-x-3">
                             <li class="inline-flex items-center">
@@ -352,7 +418,8 @@
                             <li>
                                 <div class="flex items-center">
                                     <i class="fas fa-chevron-right text-gray-400 mx-2"></i>
-                                    <span class="ml-1 text-sm font-medium text-gray-500 md:ml-2">@yield('page-title','Dashboard')</span>
+                                    <span
+                                        class="ml-1 text-sm font-medium text-gray-500 md:ml-2">@yield('page-title', 'Dashboard')</span>
                                 </div>
                             </li>
                         </ol>
@@ -426,132 +493,276 @@
             </div>
         </header>
 
-        <!-- Main Content Area -->
-        <div class="p-6">
+        <!-- Main Content Area yang bisa discroll -->
+        <div class="scrollable-content p-6">
             @yield('content')
         </div>
-    </main>
-
+    </div>
 
     <!-- JavaScript for Interactive Features -->
     <script>
-        document.addEventListener('DOMContentLoaded', function () {
+        document.addEventListener('DOMContentLoaded', function() {
             //======= SIDEBAR MOBILE TOGGLE ==========
             const sidebarToggle = document.getElementById('sidebarToggle');
             const sidebar = document.getElementById('sidebar');
             const toggleIcon = document.getElementById('toggleIcon');
 
-            sidebarToggle.addEventListener('click', function () {
-                sidebar.classList.toggle('-translate-x-full');
+            if (sidebarToggle && sidebar && toggleIcon) {
+                sidebarToggle.addEventListener('click', function() {
+                    sidebar.classList.toggle('-translate-x-full');
 
-                if (sidebar.classList.contains('-translate-x-full')) {
-                    toggleIcon.classList.remove('fa-times');
-                    toggleIcon.classList.add('fa-bars');
-                } else {
-                    toggleIcon.classList.remove('fa-bars');
-                    toggleIcon.classList.add('fa-times');
+                    if (sidebar.classList.contains('-translate-x-full')) {
+                        toggleIcon.classList.remove('fa-times');
+                        toggleIcon.classList.add('fa-bars');
+                    } else {
+                        toggleIcon.classList.remove('fa-bars');
+                        toggleIcon.classList.add('fa-times');
+                    }
+                });
+            }
+
+            //========= SISTEM MENU AKTIF BERDASARKAN URL/HREF ==========
+            
+            // Fungsi untuk mendapatkan route name dari URL
+            function getCurrentRouteFromURL() {
+                const currentPath = window.location.pathname;
+                
+                // Cari semua link yang ada di sidebar
+                const allLinks = document.querySelectorAll('.menu-item, .submenu-item');
+                
+                for (let link of allLinks) {
+                    if (link.href) {
+                        const linkUrl = new URL(link.href);
+                        if (linkUrl.pathname === currentPath) {
+                            // Jika ini adalah submenu item
+                            if (link.classList.contains('submenu-item')) {
+                                return {
+                                    type: 'submenu',
+                                    value: link.getAttribute('data-submenu'),
+                                    element: link
+                                };
+                            } else {
+                                // Jika ini adalah menu item
+                                return {
+                                    type: 'menu',
+                                    value: link.getAttribute('data-menu'),
+                                    element: link
+                                };
+                            }
+                        }
+                    }
                 }
-            });
-
-            //========= SISTEM MENU AKTIF ==========
-            // Fungsi untuk mengatur menu aktif
-            function setActiveMenu(menuType, menuValue) {
-                // Reset semua menu menjadi tidak aktif
+                
+                // Jika tidak ditemukan, coba cek berdasarkan data-route
+                for (let link of allLinks) {
+                    const route = link.getAttribute('data-route');
+                    if (route) {
+                        // Simple check - bisa dikembangkan lebih lanjut
+                        if (currentPath.includes(route.replace('.', '/'))) {
+                            if (link.classList.contains('submenu-item')) {
+                                return {
+                                    type: 'submenu',
+                                    value: link.getAttribute('data-submenu'),
+                                    element: link
+                                };
+                            }
+                        }
+                    }
+                }
+                
+                return null;
+            }
+            
+            // Fungsi untuk mengatur menu aktif berdasarkan URL
+            function setActiveMenuByURL() {
+                const currentRoute = getCurrentRouteFromURL();
+                
+                if (currentRoute) {
+                    // Reset semua state
+                    resetAllMenuStates();
+                    
+                    if (currentRoute.type === 'submenu') {
+                        // Aktifkan submenu
+                        currentRoute.element.classList.remove('inactive');
+                        currentRoute.element.classList.add('active');
+                        
+                        // Aktifkan parent dropdown
+                        const dropdownGroup = currentRoute.element.closest('.dropdown-group');
+                        if (dropdownGroup) {
+                            const dropdownToggle = dropdownGroup.querySelector('.dropdown-toggle');
+                            const dropdownContent = dropdownGroup.querySelector('.dropdown-content');
+                            const dropdownArrow = dropdownGroup.querySelector('.dropdown-arrow');
+                            
+                            if (dropdownToggle) {
+                                dropdownToggle.classList.remove('inactive');
+                                dropdownToggle.classList.add('active');
+                            }
+                            
+                            if (dropdownContent && dropdownArrow) {
+                                dropdownContent.classList.remove('max-h-0');
+                                dropdownContent.classList.add('max-h-96');
+                                dropdownArrow.classList.remove('rotate-0');
+                                dropdownArrow.classList.add('rotate-180');
+                            }
+                        }
+                    } else if (currentRoute.type === 'menu') {
+                        // Aktifkan menu utama
+                        currentRoute.element.classList.remove('inactive');
+                        currentRoute.element.classList.add('active');
+                    }
+                    
+                    // Simpan ke sessionStorage
+                    saveActiveMenuToStorage(currentRoute.value, currentRoute.type);
+                } else {
+                    // Default: beranda aktif
+                    setActiveMenu('beranda', 'menu');
+                }
+            }
+            
+            // Fungsi untuk reset semua state menu
+            function resetAllMenuStates() {
                 document.querySelectorAll('.menu-item, .dropdown-toggle, .submenu-item').forEach(item => {
                     item.classList.remove('active');
                     item.classList.add('inactive');
                 });
+            }
+            
+            // Fungsi untuk mengatur menu aktif secara manual
+            function setActiveMenu(menuValue, type = 'menu') {
+                resetAllMenuStates();
                 
-                // Hapus background-color biru dari semua menu item
-                document.querySelectorAll('.menu-item').forEach(item => {
-                    item.style.backgroundColor = '';
-                });
-                
-                if (menuType === 'menu') {
-                    // Jika menu utama yang aktif
+                if (type === 'menu') {
                     const menuItem = document.querySelector(`.menu-item[data-menu="${menuValue}"]`);
                     if (menuItem) {
                         menuItem.classList.remove('inactive');
                         menuItem.classList.add('active');
-                        menuItem.style.backgroundColor = '#3b82f6'; // Biru
                     }
-                } else if (menuType === 'submenu') {
-                    // Jika submenu yang aktif
+                } else if (type === 'submenu') {
                     const submenuItem = document.querySelector(`.submenu-item[data-submenu="${menuValue}"]`);
                     if (submenuItem) {
-                        // Aktifkan submenu
                         submenuItem.classList.remove('inactive');
                         submenuItem.classList.add('active');
-                        submenuItem.style.backgroundColor = '#334155'; // Abu-abu gelap
                         
-                        // Aktifkan juga parent dropdown-nya
-                        const parentGroup = submenuItem.closest('.dropdown-group');
-                        if (parentGroup) {
-                            const dropdownToggle = parentGroup.querySelector('.dropdown-toggle');
+                        const dropdownGroup = submenuItem.closest('.dropdown-group');
+                        if (dropdownGroup) {
+                            const dropdownToggle = dropdownGroup.querySelector('.dropdown-toggle');
+                            const dropdownContent = dropdownGroup.querySelector('.dropdown-content');
+                            const dropdownArrow = dropdownGroup.querySelector('.dropdown-arrow');
+                            
                             if (dropdownToggle) {
                                 dropdownToggle.classList.remove('inactive');
                                 dropdownToggle.classList.add('active');
-                                dropdownToggle.style.backgroundColor = '#3b82f6'; // Biru
-                                
-                                // Buka dropdown jika tertutup
-                                const dropdownContent = parentGroup.querySelector('.dropdown-content');
-                                const dropdownArrow = parentGroup.querySelector('.dropdown-arrow');
-                                if (dropdownContent && dropdownArrow) {
-                                    dropdownContent.classList.remove('max-h-0');
-                                    dropdownContent.classList.add('max-h-96');
-                                    dropdownArrow.classList.remove('rotate-0');
-                                    dropdownArrow.classList.add('rotate-180');
-                                }
                             }
-                        }
-                        
-                        // Nonaktifkan menu beranda (ubah jadi abu-abu)
-                        const berandaMenu = document.querySelector('.menu-item[data-menu="beranda"]');
-                        if (berandaMenu) {
-                            berandaMenu.classList.remove('active');
-                            berandaMenu.classList.add('inactive');
-                            berandaMenu.style.backgroundColor = ''; // Reset ke default
+                            
+                            if (dropdownContent && dropdownArrow) {
+                                dropdownContent.classList.remove('max-h-0');
+                                dropdownContent.classList.add('max-h-96');
+                                dropdownArrow.classList.remove('rotate-0');
+                                dropdownArrow.classList.add('rotate-180');
+                            }
                         }
                     }
                 }
+                
+                saveActiveMenuToStorage(menuValue, type);
             }
             
-            // Simpan status menu aktif di sessionStorage
-            function saveActiveMenu(menuType, menuValue) {
-                sessionStorage.setItem('activeMenuType', menuType);
+            // Simpan menu aktif ke sessionStorage
+            function saveActiveMenuToStorage(menuValue, type) {
+                sessionStorage.setItem('activeMenuType', type);
                 sessionStorage.setItem('activeMenuValue', menuValue);
+                sessionStorage.setItem('activeMenuURL', window.location.href);
             }
             
             // Load menu aktif dari sessionStorage
-            function loadActiveMenu() {
+            function loadActiveMenuFromStorage() {
                 const menuType = sessionStorage.getItem('activeMenuType');
                 const menuValue = sessionStorage.getItem('activeMenuValue');
+                const savedURL = sessionStorage.getItem('activeMenuURL');
                 
-                // Jika baru login atau logout, reset ke beranda
-                const isNewSession = !sessionStorage.getItem('isLoggedIn');
-                if (isNewSession) {
-                    sessionStorage.setItem('isLoggedIn', 'true');
-                    // Clear menu yang disimpan sebelumnya
-                    sessionStorage.removeItem('activeMenuType');
-                    sessionStorage.removeItem('activeMenuValue');
-                    setActiveMenu('menu', 'beranda');
-                    return;
-                }
-                
-                if (menuType && menuValue) {
-                    setActiveMenu(menuType, menuValue);
+                // Cek jika URL masih sama
+                if (savedURL && savedURL === window.location.href && menuType && menuValue) {
+                    setActiveMenu(menuValue, menuType);
                 } else {
-                    // Default: menu beranda aktif
-                    setActiveMenu('menu', 'beranda');
+                    // Jika URL berbeda, set berdasarkan URL saat ini
+                    setActiveMenuByURL();
                 }
             }
             
+            //========= DROPDOWN SIDEBAR ==========
+            const dropdownToggles = document.querySelectorAll('.dropdown-toggle');
+
+            dropdownToggles.forEach(toggle => {
+                toggle.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+
+                    const dropdownGroup = this.closest('.dropdown-group');
+                    const content = dropdownGroup.querySelector('.dropdown-content');
+                    const arrow = dropdownGroup.querySelector('.dropdown-arrow');
+
+                    if (!content || !arrow) return;
+
+                    // Tutup semua dropdown lainnya
+                    dropdownToggles.forEach(otherToggle => {
+                        if (otherToggle !== toggle) {
+                            const otherGroup = otherToggle.closest('.dropdown-group');
+                            const otherContent = otherGroup.querySelector('.dropdown-content');
+                            const otherArrow = otherGroup.querySelector('.dropdown-arrow');
+                            
+                            if (otherContent && otherArrow) {
+                                otherContent.classList.remove('max-h-96');
+                                otherContent.classList.add('max-h-0');
+                                otherArrow.classList.remove('rotate-180');
+                                otherArrow.classList.add('rotate-0');
+                                
+                                // Nonaktifkan dropdown lainnya jika tidak ada submenu aktif
+                                if (!otherContent.querySelector('.submenu-item.active')) {
+                                    otherToggle.classList.remove('active');
+                                    otherToggle.classList.add('inactive');
+                                }
+                            }
+                        }
+                    });
+
+                    // Buka/tutup dropdown saat ini
+                    if (content.classList.contains('max-h-0')) {
+                        // Buka dropdown
+                        content.classList.remove('max-h-0');
+                        content.classList.add('max-h-96');
+                        arrow.classList.remove('rotate-0');
+                        arrow.classList.add('rotate-180');
+                        
+                        // Set dropdown sebagai aktif
+                        this.classList.remove('inactive');
+                        this.classList.add('active');
+                        
+                        // Simpan ke storage
+                        const menuValue = this.getAttribute('data-menu');
+                        saveActiveMenuToStorage(menuValue, 'dropdown');
+                    } else {
+                        // Tutup dropdown
+                        content.classList.remove('max-h-96');
+                        content.classList.add('max-h-0');
+                        arrow.classList.remove('rotate-180');
+                        arrow.classList.add('rotate-0');
+                        
+                        // Nonaktifkan dropdown jika tidak ada submenu aktif
+                        if (!content.querySelector('.submenu-item.active')) {
+                            this.classList.remove('active');
+                            this.classList.add('inactive');
+                        }
+                    }
+                });
+            });
+
             // Event listener untuk menu item
             document.querySelectorAll('.menu-item').forEach(item => {
                 item.addEventListener('click', function(e) {
                     const menuValue = this.getAttribute('data-menu');
-                    saveActiveMenu('menu', menuValue);
-                    setActiveMenu('menu', menuValue);
+                    if (menuValue !== 'logout') {
+                        setActiveMenu(menuValue, 'menu');
+                    }
                 });
             });
             
@@ -559,157 +770,82 @@
             document.querySelectorAll('.submenu-item').forEach(item => {
                 item.addEventListener('click', function(e) {
                     const submenuValue = this.getAttribute('data-submenu');
-                    saveActiveMenu('submenu', submenuValue);
-                    setActiveMenu('submenu', submenuValue);
+                    setActiveMenu(submenuValue, 'submenu');
                 });
             });
-            
-            // Event listener untuk dropdown toggle
-            document.querySelectorAll('.dropdown-toggle').forEach(toggle => {
-                toggle.addEventListener('click', function(e) {
-                    // Hanya untuk toggle dropdown, tidak mengubah status aktif
-                    e.stopPropagation();
-                    
-                    // Jika dropdown ini sedang aktif (berdasarkan route), jangan toggle
-                    if (!this.classList.contains('active')) {
-                        const content = this.nextElementSibling;
-                        const arrow = this.querySelector('.dropdown-arrow');
-                        
-                        if (content && arrow) {
-                            content.classList.toggle('max-h-96');
-                            content.classList.toggle('max-h-0');
-                            arrow.classList.toggle('rotate-180');
-                        }
-                    }
-                });
-            });
-            
-            // Load menu aktif saat halaman dimuat
-            loadActiveMenu();
-            
-            //========= DROPDOWN SIDEBAR ==========
-            const dropdownGroups = document.querySelectorAll('.dropdown-group');
 
-            dropdownGroups.forEach(group => {
-                const toggle = group.querySelector('.dropdown-toggle');
-                const content = group.querySelector('.dropdown-content');
-                const arrow = group.querySelector('.dropdown-arrow');
+            // Tutup dropdown saat klik di luar
+            document.addEventListener('click', function(e) {
+                if (!e.target.closest('.dropdown-group')) {
+                    dropdownToggles.forEach(toggle => {
+                        const dropdownGroup = toggle.closest('.dropdown-group');
+                        const content = dropdownGroup.querySelector('.dropdown-content');
+                        const arrow = dropdownGroup.querySelector('.dropdown-arrow');
+                        const hasActiveSubmenu = content.querySelector('.submenu-item.active');
 
-                // Cek apakah dropdown harus dibuka berdasarkan route aktif
-                if (content && content.classList.contains('!max-h-96')) {
-                    content.classList.remove('max-h-0');
-                    content.classList.add('max-h-96');
-                    if (arrow) arrow.classList.remove('rotate-0');
-                    if (arrow) arrow.classList.add('rotate-180');
-                }
-
-                toggle.addEventListener('click', (e) => {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    
-                    // Tutup dropdown lain (agar tidak menumpuk terbuka)
-                    dropdownGroups.forEach(other => {
-                        if (other !== group) {
-                            const otherContent = other.querySelector('.dropdown-content');
-                            const otherArrow = other.querySelector('.dropdown-arrow');
-                            if (otherContent && otherArrow) {
-                                otherContent.classList.add('max-h-0');
-                                otherContent.classList.remove('max-h-96');
-                                otherArrow.classList.remove('rotate-180');
-                            }
+                        if (content && arrow && !hasActiveSubmenu) {
+                            content.classList.remove('max-h-96');
+                            content.classList.add('max-h-0');
+                            arrow.classList.remove('rotate-180');
+                            arrow.classList.add('rotate-0');
+                            
+                            toggle.classList.remove('active');
+                            toggle.classList.add('inactive');
                         }
                     });
-
-                    // Buka/Tutup dropdown aktif
-                    content.classList.toggle('max-h-96');
-                    content.classList.toggle('max-h-0');
-                    arrow.classList.toggle('rotate-180');
-                });
+                }
             });
+
+            // Set menu aktif saat halaman dimuat
+            loadActiveMenuFromStorage();
 
             //============ AUTO CLOSE SIDEBAR MOBILE ==========
             if (window.innerWidth < 1024) {
-                document.querySelectorAll('nav a').forEach(item => {
+                document.querySelectorAll('nav a, nav button').forEach(item => {
                     item.addEventListener('click', () => {
-                        sidebar.classList.add('-translate-x-full');
-                        toggleIcon.classList.remove('fa-times');
-                        toggleIcon.classList.add('fa-bars');
-                    });
-                });
-            }
-            
-            // Tutup dropdown ketika klik di luar
-            document.addEventListener('click', function(e) {
-                if (!e.target.closest('.dropdown-group')) {
-                    dropdownGroups.forEach(group => {
-                        const content = group.querySelector('.dropdown-content');
-                        const arrow = group.querySelector('.dropdown-arrow');
-                        
-                        // Jangan tutup dropdown jika menu aktif
-                        const toggle = group.querySelector('.dropdown-toggle');
-                        if (toggle && !toggle.classList.contains('active')) {
-                            if (content && content.classList.contains('max-h-96')) {
-                                content.classList.remove('max-h-96');
-                                content.classList.add('max-h-0');
-                                if (arrow) arrow.classList.remove('rotate-180');
+                        if (sidebar) {
+                            sidebar.classList.add('-translate-x-full');
+                            if (toggleIcon) {
+                                toggleIcon.classList.remove('fa-times');
+                                toggleIcon.classList.add('fa-bars');
                             }
                         }
                     });
-                }
-            });
+                });
+            }
 
             //========= LOGOUT HANDLER ==========
-            // Saat logout, reset session storage
-            document.querySelector('a[href="{{ route('logout') }}"]')?.addEventListener('click', function(e) {
-                e.preventDefault();
-                
-                // Tampilkan konfirmasi logout
-                Swal.fire({
-                    title: 'Konfirmasi Logout',
-                    text: 'Apakah Anda yakin ingin keluar?',
-                    icon: 'warning',
-                    showCancelButton: true,
-                    confirmButtonColor: '#3085d6',
-                    cancelButtonColor: '#d33',
-                    confirmButtonText: 'Ya, Keluar',
-                    cancelButtonText: 'Batal'
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        // Reset session storage untuk menu
-                        sessionStorage.removeItem('isLoggedIn');
-                        sessionStorage.removeItem('activeMenuType');
-                        sessionStorage.removeItem('activeMenuValue');
-                        
-                        // Redirect ke halaman logout
+            const logoutLink = document.querySelector('a[href="{{ route('logout') }}"]');
+            if (logoutLink) {
+                logoutLink.addEventListener('click', function(e) {
+                    e.preventDefault();
+
+                    if (typeof Swal !== 'undefined') {
+                        Swal.fire({
+                            title: 'Konfirmasi Logout',
+                            text: 'Apakah Anda yakin ingin keluar?',
+                            icon: 'warning',
+                            showCancelButton: true,
+                            confirmButtonColor: '#3085d6',
+                            cancelButtonColor: '#d33',
+                            confirmButtonText: 'Ya, Keluar',
+                            cancelButtonText: 'Batal'
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                sessionStorage.clear();
+                                window.location.href = this.href;
+                            }
+                        });
+                    } else {
+                        sessionStorage.clear();
                         window.location.href = this.href;
                     }
                 });
-            });
-
+            }
         });
     </script>
-    <script src="path/to/chartjs/dist/chart.umd.min.js"></script>
+
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    @if(session('login_success'))
-        <script>
-            Swal.fire({
-                icon: 'success',
-                title: 'Login Berhasil',
-                text: "{{ session('login_success') }}",
-                timer: 2500,
-                showConfirmButton: false
-            })
-        </script>
-    @endif
-    @if(session('login_failed'))
-        <script>
-            Swal.fire({
-                icon: 'error',
-                title: 'Login Gagal!',
-                text: "{{ session('login_failed') }}",
-            })
-        </script>
-    @endif
     @stack('scripts')
 </body>
 </html>

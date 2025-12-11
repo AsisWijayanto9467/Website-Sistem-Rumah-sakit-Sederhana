@@ -17,6 +17,9 @@ class Patients extends Model
         'tanggal_lahir',
         'alamat',
         'tanggal_registrasi',
+        'waktu_daftar',
+        'kota',
+        'nomor_identitas'
     ];
 
     protected $casts = [

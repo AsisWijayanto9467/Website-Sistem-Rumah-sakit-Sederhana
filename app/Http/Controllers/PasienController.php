@@ -12,10 +12,33 @@ class PasienController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $pastients = Patients::with('user')->get();
-        return view('pasien.index', compact('pastients'));
+        $search = $request->input('search');
+        $perPage = $request->input('per_page', 10);
+        $query = Patients::with('user');
+
+        if($search) {
+            $query->where(function($q) use ($search) {
+                $q  ->where('nama',  'LIKE', "%{$search}")
+                    ->orWhere('kota', 'LIKE', "%{$search}")
+                    ->orWhere('nomor_telpon', 'LIKE', "%{$search}")
+                    ->orWhere('nomor_identitas', 'LIKE', "%{$search}")
+                    ->orWhereHas('user', function($userQuery) use ($search) {
+                        $userQuery->where('email', 'LIKE', "%{$search}%");
+                    });
+            });
+        }
+
+        $patients = $query->latest()->paginate($perPage);
+        if($search) {
+            $patients->appends(['search' => $search]);
+        }
+        if($request->has('per_page')) {
+            $patients->appends(['per_page' => $perPage]);
+        }
+
+        return view('pasien.index', compact('patients', 'search'));
     }
 
     /**
@@ -32,15 +55,18 @@ class PasienController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'nama'                  => 'required|string|max:100',
-            'email'                 => 'required|email|unique:users.email',
-            'password'              => 'required|conifrmed|min:6',
-            'nomor_telpon'          => 'nullable|string',
-            'gender'                => 'nullable|in:laki-laki,perempuan',
-            'tipe_darah'            => 'nullable|string',
-            'tanggal_lahir'         => 'nullable|date',
-            'alamat'                => 'required|string',
-            'tanggal_registrasi'    => 'nullable|date'
+            'nama'                => 'required|string|max:100',
+            'email'               => 'required|email|unique:users,email',
+            'password'            => 'required|confirmed|min:6',
+            'nomor_telpon'        => 'nullable|string',
+            'gender'              => 'nullable|in:laki-laki,perempuan',
+            'tipe_darah'          => 'nullable|string',
+            'tanggal_lahir'       => 'nullable|date',
+            'alamat'              => 'required|string',
+            'tanggal_registrasi'  => 'nullable|date',
+            'waktu_daftar'        => 'nullable|date_format:H:i',
+            'kota'                => 'nullable|string',
+            'nomor_identitas'     => 'nullable|string',
         ]);
 
         $user = User::create([
@@ -51,20 +77,24 @@ class PasienController extends Controller
         ]);
 
         Patients::create([
-            'user_id' => $user->id,
-            'nama' => $request->nama,
-            'nomor_telpon' => $request->nomor_telpon,
-            'gender' => $request->gender,
-            'tipe_darah' => $request->tipe_darah,
-            'tanggal_lahir' => $request->tanggal_lahir,
-            'alamat' => $request->alamat,
-            'tanggal_registrasi' => $request->tanggal_registrasi ?? now(),
+            'user_id'           => $user->id,
+            'nama'              => $request->nama,
+            'nomor_telpon'      => $request->nomor_telpon,
+            'gender'            => $request->gender,
+            'tipe_darah'        => $request->tipe_darah,
+            'tanggal_lahir'     => $request->tanggal_lahir,
+            'alamat'            => $request->alamat,
+            'tanggal_registrasi'=> $request->tanggal_registrasi ?? now(),
+            'waktu_daftar'      => $request->waktu_daftar 
+                                    ? now()->format('Y-m-d') . ' ' . $request->waktu_daftar 
+                                    : now(),
+            'kota'              => $request->kota,
+            'nomor_identitas'   => $request->nomor_identitas,
         ]);
 
-        return redirect()->route('pasien.index')->with([
-            'success', 'Pasien berhasil Ditambahkan'
-        ]);
+        return redirect()->route('pasien.index')->with('success', 'Pasien berhasil ditambahkan');
     }
+
 
     /**
      * Display the specified resource.
@@ -94,17 +124,20 @@ class PasienController extends Controller
 
         $request->validate([
             'nama'                  => 'required|string|max:100',
-            'email'                 => 'required|email|unique:users.email,' . $user->id,
-            'password'              => 'required|conifrmed|min:6',
+            'email'                 => 'required|email|unique:users,email,' . $user->id,
+            'password'              => 'nullable|conifrmed|min:6',
             'nomor_telpon'          => 'nullable|string',
             'gender'                => 'nullable|in:laki-laki,perempuan',
             'tipe_darah'            => 'nullable|string',
             'tanggal_lahir'         => 'nullable|date',
             'alamat'                => 'required|string',
-            'tanggal_registrasi'    => 'nullable|date'
+            'tanggal_registrasi'    => 'nullable|date',
+            'waktu_daftar'        => 'nullable|date_format:H:i',
+            'kota'                => 'nullable|string',
+            'nomor_identitas'     => 'nullable|string',
         ]);
 
-        $user->name  = $request->nama;
+        $user->nama  = $request->nama;
         $user->email = $request->email;
 
         if ($request->filled('password')) {
@@ -121,6 +154,11 @@ class PasienController extends Controller
             'tanggal_lahir'      => $request->tanggal_lahir,
             'alamat'             => $request->alamat,
             'tanggal_registrasi' => $request->tanggal_registrasi,
+            'waktu_daftar'      => $request->waktu_daftar 
+                                    ? now()->format('Y-m-d') . ' ' . $request->waktu_daftar 
+                                    : now(),
+            'kota'              => $request->kota,
+            'nomor_identitas'   => $request->nomor_identitas,
         ]);
 
         return redirect()->route('pasien.index')->with(
@@ -139,7 +177,7 @@ class PasienController extends Controller
         $patient->delete();
         $user->delete();
 
-        return redirect()->route('patients.index')
+        return redirect()->route('pasien.index')
             ->with('success', 'Pasien berhasil dihapus beserta user akunnya.');
     }
 }

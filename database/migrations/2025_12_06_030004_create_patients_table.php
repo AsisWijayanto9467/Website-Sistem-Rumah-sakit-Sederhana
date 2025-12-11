@@ -21,6 +21,9 @@ return new class extends Migration
             $table->date('tanggal_lahir')->nullable();
             $table->string('alamat');
             $table->date('tanggal_registrasi')->nullable();
+            $table->dateTime('waktu_daftar')->nullable();
+            $table->string('kota')->nullable();
+            $table->string('nomor_identitas')->nullable();
             $table->timestamps();
         });
     }
