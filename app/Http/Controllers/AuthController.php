@@ -28,7 +28,9 @@ class AuthController extends Controller
                 ]);
             }
             if (Auth::user()->role == 'doctor') {
-                return redirect()->route('doctor.dashboard');
+                return redirect()->route('admin.beranda')->with([
+                    'login_success' => 'Selamat Datang ' . Auth::user()->nama
+                ]);
             }
             if (Auth::user()->role == 'patient') {
                 return redirect()->route('patient.dashboard');

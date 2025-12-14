@@ -19,5 +19,7 @@ class DatabaseSeeder extends Seeder
         $this->call([PasienSeeder::class]);
         $this->call([PoliSeeder::class]);
         $this->call([DokterSeeder::class]);
+        $this->call([ObatSeeder::class]);
+        $this->call([VisitSeeder::class]);
     }
 }

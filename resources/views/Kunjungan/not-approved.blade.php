@@ -1,7 +1,7 @@
 @extends('layout.app')
 
-@section('title','Data Dokter')
-@section('page-title','Tabel Dokter')
+@section('title','Data Kunjungan Not Approved')
+@section('page-title','Table Kunjungan Not Approved')
 
 @section('content')
     <div class="container mx-auto px-4 py-6">
@@ -9,14 +9,21 @@
         <div class="mb-6">
             <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
                 <div>
-                    <h1 class="text-2xl font-bold text-gray-900">Data Dokter</h1>
-                    <p class="text-gray-600 mt-1">Kelola data dokter yang terdaftar di sistem</p>
+                    <h1 class="text-2xl font-bold text-gray-900">Data Kunjungan Not Approved</h1>
+                    <p class="text-gray-600 mt-1">Kelola data kunjungan yang ditolak/ditunda</p>
                 </div>
-                <a href="{{ route('dokter.create') }}" 
-                   class="inline-flex items-center px-4 py-2.5 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition">
-                    <i class="fas fa-plus mr-2"></i>
-                    Tambah Dokter
-                </a>
+                <div class="flex gap-3">
+                    <a href="{{ route('kunjungan.pending') }}" 
+                       class="inline-flex items-center px-4 py-2.5 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition">
+                        <i class="fas fa-clock mr-2"></i>
+                        Kunjungan Pending
+                    </a>
+                    <a href="{{ route('kunjungan.create') }}" 
+                       class="inline-flex items-center px-4 py-2.5 bg-green-600 text-white font-medium rounded-lg hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 transition">
+                        <i class="fas fa-plus mr-2"></i>
+                        Tambah Kunjungan
+                    </a>
+                </div>
             </div>
         </div>
 
@@ -64,7 +71,7 @@
                                             id="searchInput" 
                                             name="search"
                                             value="{{ $search }}"
-                                            placeholder="Cari berdasarkan nama, email, telepon, atau poliklinik..." 
+                                            placeholder="Cari berdasarkan nama pasien, dokter, atau tanggal..." 
                                             class="w-full pl-10 pr-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition text-sm"
                                             onkeypress="handleSearchKeyPress(event)">
                                         @if($search)
@@ -109,7 +116,7 @@
             </div>
         </div>
 
-        <!-- Doctors Table Card -->
+        <!-- Visits Table Card -->
         <div class="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
             <!-- Table -->
             <div class="overflow-x-auto">
@@ -117,16 +124,16 @@
                     <thead class="bg-gray-50">
                         <tr>
                             <th scope="col" class="px-6 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
-                                Nama Dokter
+                                Pasien & Dokter
                             </th>
                             <th scope="col" class="px-6 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
-                                Poliklinik & Status
+                                Poliklinik & Jadwal
                             </th>
                             <th scope="col" class="px-6 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
-                                Kontak & Profesional
+                                Status & Waktu
                             </th>
                             <th scope="col" class="px-6 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
-                                Pendidikan & Pengalaman
+                                Alasan Kunjungan
                             </th>
                             <th scope="col" class="px-6 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
                                 Aksi
@@ -134,34 +141,61 @@
                         </tr>
                     </thead>
                     <tbody class="bg-gray-50 divide-y divide-gray-100">
-                        @forelse($docters as $dokter)
-                        <tr class="hover:bg-gray-100 transition-colors">
-                            <!-- Column 1: Nama Dokter -->
+                        @forelse($kunjungan as $visit)
+                        <tr class="hover:bg-gray-100 transition-colors bg-red-50">
+                            <!-- Column 1: Pasien & Dokter -->
                             <td class="px-6 py-4">
-                                <div class="space-y-1">
-                                    <div class="text-sm font`-semibold text-gray-900">
-                                        {{ $dokter->nama }}
+                                <div class="space-y-2">
+                                    <div>
+                                        <span class="text-xs font-medium text-gray-700 mb-1 block">Pasien:</span>
+                                        <div class="text-sm font-semibold text-gray-900">
+                                            {{ $visit->patient->nama ?? 'N/A' }}
+                                        </div>
+                                        @if($visit->patient->nomor_identitas ?? false)
+                                        <div class="text-xs text-gray-500">
+                                            ID: {{ $visit->patient->nomor_identitas }}
+                                        </div>
+                                        @endif
                                     </div>
-                                    <div class="flex items-start">
-                                        <span class="text-xs font-medium text-gray-700 mr-2">Email:</span>
-                                        <span class="text-sm text-gray-800">{{ $dokter->user->email ?? '-' }}</span>
+                                    <div>
+                                        <span class="text-xs font-medium text-gray-700 mb-1 block">Dokter:</span>
+                                        <div class="text-sm text-gray-800">
+                                            {{ $visit->doctor->nama ?? 'N/A' }}
+                                        </div>
                                     </div>
                                 </div>
                             </td>
 
-                            <!-- Column 2: Poliklinik & Status -->
+                            <!-- Column 2: Poliklinik & Jadwal -->
                             <td class="px-6 py-4">
                                 <div class="space-y-2">
-                                    @if($dokter->poliklinik)
-                                    <div class="flex items-start">
-                                        <span class="text-xs font-medium text-gray-700 mr-2">Poliklinik:</span>
-                                        <span class="text-sm text-gray-800">{{ $dokter->poliklinik->nama_poli }}</span>
+                                    <div>
+                                        <span class="text-xs font-medium text-gray-700 mb-1 block">Poliklinik:</span>
+                                        <div class="text-sm text-gray-800">
+                                            {{ $visit->poliklinik->nama_poli ?? 'N/A' }}
+                                        </div>
                                     </div>
-                                    @endif
-                                    
-                                    <div class="flex items-start">
-                                        <span class="text-xs font-medium text-gray-700 mr-2">Status:</span>
-                                        @if($dokter->status == 'aktif')
+                                    <div>
+                                        <span class="text-xs font-medium text-gray-700 mb-1 block">Tanggal:</span>
+                                        <div class="text-sm text-gray-800">
+                                            {{ \Carbon\Carbon::parse($visit->tanggal_kunjungan)->format('d/m/Y') }}
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <span class="text-xs font-medium text-gray-700 mb-1 block">Waktu:</span>
+                                        <div class="text-sm text-gray-800">
+                                            {{ \Carbon\Carbon::parse($visit->waktu_kunjungan)->format('H:i') }}
+                                        </div>
+                                    </div>
+                                </div>
+                            </td>
+
+                            <!-- Column 3: Status & Waktu -->
+                            <td class="px-6 py-4">
+                                <div class="space-y-2">
+                                    <div>
+                                        <span class="text-xs font-medium text-gray-700 mb-1 block">Status Kunjungan:</span>
+                                        @if($visit->status == 'aktif')
                                         <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-green-100 text-green-800">
                                             <i class="fas fa-check-circle mr-1 text-xs"></i>
                                             Aktif
@@ -173,57 +207,28 @@
                                         </span>
                                         @endif
                                     </div>
-                                    
-                                    @if($dokter->tarif_konsultasi)
-                                    <div class="flex items-start">
-                                        <span class="text-xs font-medium text-gray-700 mr-2">Tarif:</span>
-                                        <span class="text-sm text-gray-800">Rp {{ number_format($dokter->tarif_konsultasi, 0, ',', '.') }}</span>
-                                    </div>
-                                    @endif
-                                </div>
-                            </td>
-
-                            <!-- Column 3: Kontak & Profesional -->
-                            <td class="px-6 py-4">
-                                <div class="space-y-2">
-                                    @if($dokter->nomor_telpon)
-                                    <div class="flex items-start">
-                                        <span class="text-xs font-medium text-gray-700 mr-2">Telepon:</span>
-                                        <span class="text-sm text-gray-800">{{ $dokter->nomor_telpon }}</span>
-                                    </div>
-                                    @endif
-                                    
-                                    <div class="flex items-start">
-                                        <span class="text-xs font-medium text-gray-700 mr-2">Bergabung:</span>
-                                        <span class="text-sm text-gray-800">
-                                            {{ \Carbon\Carbon::parse($dokter->created_at)->format('d/m/Y') }}
+                                    <div>
+                                        <span class="text-xs font-medium text-gray-700 mb-1 block">Status Persetujuan:</span>
+                                        <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-red-100 text-red-800">
+                                            <i class="fas fa-times-circle mr-1 text-xs"></i>
+                                            Not Approved
                                         </span>
                                     </div>
-                                    
-                                    @if($dokter->user)
-                                    <div class="flex items-start">
-                                        <span class="text-xs font-medium text-gray-700 mr-2">Role:</span>
-                                        <span class="text-sm text-gray-800 capitalize">{{ $dokter->user->role }}</span>
+                                    <div class="text-xs text-gray-500 mt-2">
+                                        Ditolak: {{ \Carbon\Carbon::parse($visit->updated_at)->format('d/m/Y H:i') }}
                                     </div>
-                                    @endif
                                 </div>
                             </td>
 
-                            <!-- Column 4: Pendidikan & Pengalaman -->
+                            <!-- Column 4: Alasan Kunjungan -->
                             <td class="px-6 py-4">
-                                <div class="space-y-2">
-                                    @if($dokter->pendidikan)
-                                    <div class="flex items-start">
-                                        <span class="text-xs font-medium text-gray-700 mr-2">Pendidikan:</span>
-                                        <span class="text-sm text-gray-800">{{ Str::limit($dokter->pendidikan, 50) }}</span>
+                                <div class="space-y-1">
+                                    @if($visit->Alasan)
+                                    <div class="text-sm text-gray-800 max-w-md">
+                                        {{ Str::limit($visit->Alasan, 100) }}
                                     </div>
-                                    @endif
-                                    
-                                    @if($dokter->lama_pengalaman)
-                                    <div class="flex items-start">
-                                        <span class="text-xs font-medium text-gray-700 mr-2">Pengalaman:</span>
-                                        <span class="text-sm text-gray-800">{{ $dokter->lama_pengalaman }} tahun</span>
-                                    </div>
+                                    @else
+                                    <span class="text-sm text-gray-500 italic">Tidak ada alasan</span>
                                     @endif
                                 </div>
                             </td>
@@ -231,18 +236,19 @@
                             <!-- Column 5: Aksi -->
                             <td class="px-6 py-4">
                                 <div class="space-y-2 min-w-[120px]">
-                                    <!-- Edit and Delete Buttons Side by Side -->
+                                    <!-- Approve Kembali and Hapus Buttons Side by Side -->
                                     <div class="flex space-x-2">
-                                        <!-- Edit Button -->
-                                        <a href="{{ route('dokter.edit', $dokter->id) }}" 
-                                           class="inline-flex items-center justify-center px-3 py-1.5 bg-blue-600 text-white text-sm font-medium rounded hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1 transition flex-1">
-                                            <i class="fas fa-edit mr-1.5 text-xs"></i>
-                                            Edit
-                                        </a>
+                                        <!-- Approve Kembali Button -->
+                                        <button type="button" 
+                                                onclick="confirmApproveKembali({{ $visit->id }})"
+                                                class="inline-flex items-center justify-center px-3 py-1.5 bg-green-600 text-white text-sm font-medium rounded hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-1 transition flex-1">
+                                            <i class="fas fa-redo mr-1.5 text-xs"></i>
+                                            Approve
+                                        </button>
                                         
                                         <!-- Delete Button -->
                                         <button type="button" 
-                                                onclick="confirmDelete({{ $dokter->id }})"
+                                                onclick="confirmDelete({{ $visit->id }})"
                                                 class="inline-flex items-center justify-center px-3 py-1.5 bg-red-600 text-white text-sm font-medium rounded hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-1 transition flex-1">
                                             <i class="fas fa-trash mr-1.5 text-xs"></i>
                                             Hapus
@@ -256,27 +262,27 @@
                         <tr>
                             <td colspan="5" class="px-6 py-12 text-center">
                                 <div class="flex flex-col items-center justify-center">
-                                    <i class="fas fa-user-md text-4xl text-gray-300 mb-4"></i>
+                                    <i class="fas fa-calendar-times text-4xl text-gray-300 mb-4"></i>
                                     <h3 class="text-lg font-medium text-gray-900 mb-2">
                                         @if($search)
                                             Hasil pencarian "{{ $search }}" tidak ditemukan
                                         @else
-                                            Tidak ada data dokter
+                                            Tidak ada data kunjungan not approved
                                         @endif
                                     </h3>
                                     <p class="text-gray-600 mb-6">
                                         @if($search)
                                             Coba dengan kata kunci lain atau 
-                                            <a href="{{ route('doctors.index') }}" class="text-blue-600 hover:underline">reset pencarian</a>
+                                            <a href="{{ route('kunjungan.not-approved') }}" class="text-blue-600 hover:underline">reset pencarian</a>
                                         @else
-                                            Belum ada dokter yang terdaftar dalam sistem.
+                                            Belum ada kunjungan yang ditolak/ditunda.
                                         @endif
                                     </p>
                                     @if(!$search)
-                                    <a href="{{ route('dokter.create') }}" 
+                                    <a href="{{ route('kunjungan.pending') }}" 
                                        class="inline-flex items-center px-4 py-2 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition">
-                                        <i class="fas fa-plus mr-2"></i>
-                                        Tambah Dokter Baru
+                                        <i class="fas fa-clock mr-2"></i>
+                                        Lihat Kunjungan Pending
                                     </a>
                                     @endif
                                 </div>
@@ -288,42 +294,42 @@
             </div>
             
             <!-- Pagination -->
-            @if($docters->hasPages())
+            @if($kunjungan->hasPages())
             <div class="px-6 py-4 border-t border-gray-200 bg-gray-50">
                 <div class="flex flex-col sm:flex-row items-center justify-between gap-4">
                     <!-- Showing entries info -->
                     <div class="text-sm text-gray-700">
                         Menampilkan 
-                        <span class="font-medium">{{ $docters->firstItem() }}</span>
+                        <span class="font-medium">{{ $kunjungan->firstItem() }}</span>
                         sampai 
-                        <span class="font-medium">{{ $docters->lastItem() }}</span>
+                        <span class="font-medium">{{ $kunjungan->lastItem() }}</span>
                         dari 
-                        <span class="font-medium">{{ $docters->total() }}</span>
-                        data dokter
+                        <span class="font-medium">{{ $kunjungan->total() }}</span>
+                        data kunjungan not approved
                     </div>
                     
                     <!-- Pagination Links -->
                     <div class="flex items-center space-x-1">
                         <!-- Previous Page Link -->
-                        @if($docters->onFirstPage())
+                        @if($kunjungan->onFirstPage())
                         <span class="px-3 py-1.5 text-gray-400 bg-white border border-gray-300 rounded-lg cursor-not-allowed">
                             <i class="fas fa-chevron-left"></i>
                         </span>
                         @else
-                        <a href="{{ $docters->previousPageUrl() }}{{ $search ? '&search=' . $search : '' }}{{ request('per_page') ? '&per_page=' . request('per_page') : '' }}" 
+                        <a href="{{ $kunjungan->previousPageUrl() }}{{ $search ? '&search=' . $search : '' }}{{ request('per_page') ? '&per_page=' . request('per_page') : '' }}" 
                            class="px-3 py-1.5 text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition">
                             <i class="fas fa-chevron-left"></i>
                         </a>
                         @endif
                         
                         <!-- Page Numbers -->
-                        @foreach(range(1, $docters->lastPage()) as $page)
-                            @if($page == $docters->currentPage())
+                        @foreach(range(1, $kunjungan->lastPage()) as $page)
+                            @if($page == $kunjungan->currentPage())
                             <span class="px-3 py-1.5 text-white bg-blue-600 border border-blue-600 rounded-lg font-medium">
                                 {{ $page }}
                             </span>
-                            @elseif($page >= $docters->currentPage() - 2 && $page <= $docters->currentPage() + 2)
-                            <a href="{{ $docters->url($page) }}{{ $search ? '&search=' . $search : '' }}{{ request('per_page') ? '&per_page=' . request('per_page') : '' }}" 
+                            @elseif($page >= $kunjungan->currentPage() - 2 && $page <= $kunjungan->currentPage() + 2)
+                            <a href="{{ $kunjungan->url($page) }}{{ $search ? '&search=' . $search : '' }}{{ request('per_page') ? '&per_page=' . request('per_page') : '' }}" 
                                class="px-3 py-1.5 text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition">
                                 {{ $page }}
                             </a>
@@ -331,8 +337,8 @@
                         @endforeach
                         
                         <!-- Next Page Link -->
-                        @if($docters->hasMorePages())
-                        <a href="{{ $docters->nextPageUrl() }}{{ $search ? '&search=' . $search : '' }}{{ request('per_page') ? '&per_page=' . request('per_page') : '' }}" 
+                        @if($kunjungan->hasMorePages())
+                        <a href="{{ $kunjungan->nextPageUrl() }}{{ $search ? '&search=' . $search : '' }}{{ request('per_page') ? '&per_page=' . request('per_page') : '' }}" 
                            class="px-3 py-1.5 text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition">
                             <i class="fas fa-chevron-right"></i>
                         </a>
@@ -347,14 +353,24 @@
             @endif
         </div>
 
-        <!-- Hidden Delete Forms -->
-        @foreach($docters as $dokter)
-        <form id="delete-form-{{ $dokter->id }}" 
-              action="{{ route('dokter.destroy', $dokter->id) }}" 
+        <!-- Hidden Forms -->
+        @foreach($kunjungan as $visit)
+        <!-- Delete Form -->
+        <form id="delete-form-{{ $visit->id }}" 
+              action="{{ route('kunjungan.destroy', $visit->id) }}" 
               method="POST" 
               class="hidden">
             @csrf
             @method('DELETE')
+        </form>
+        
+        <!-- Approve Kembali Form -->
+        <form id="approve-kembali-form-{{ $visit->id }}" 
+              action="{{ route('kunjungan.approve-kembali', $visit->id) }}" 
+              method="POST" 
+              class="hidden">
+            @csrf
+            @method('PUT')
         </form>
         @endforeach
     </div>
@@ -413,10 +429,11 @@
         }
 
         document.addEventListener('DOMContentLoaded', function() {
-            window.confirmDelete = function(dokterId) {
+            // Confirm Delete Function
+            window.confirmDelete = function(visitId) {
                 Swal.fire({
                     title: 'Konfirmasi Hapus',
-                    text: 'Apakah Anda yakin ingin menghapus data dokter ini?',
+                    text: 'Apakah Anda yakin ingin menghapus data kunjungan ini?',
                     icon: 'warning',
                     showCancelButton: true,
                     confirmButtonColor: '#3085d6',
@@ -430,7 +447,33 @@
                     }
                 }).then((result) => {
                     if (result.isConfirmed) {
-                        const form = document.getElementById(`delete-form-${dokterId}`);
+                        const form = document.getElementById(`delete-form-${visitId}`);
+                        if (form) {
+                            form.submit();
+                        }
+                    }
+                });
+            };
+
+            // Confirm Approve Kembali Function
+            window.confirmApproveKembali = function(visitId) {
+                Swal.fire({
+                    title: 'Konfirmasi Approve',
+                    text: 'Apakah Anda yakin ingin mengembalikan status kunjungan ini menjadi pending?',
+                    icon: 'question',
+                    showCancelButton: true,
+                    confirmButtonColor: '#28a745',
+                    cancelButtonColor: '#6c757d',
+                    confirmButtonText: 'Ya, Approve!',
+                    cancelButtonText: 'Batal',
+                    reverseButtons: true,
+                    customClass: {
+                        confirmButton: 'mr-2',
+                        cancelButton: 'ml-2'
+                    }
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        const form = document.getElementById(`approve-kembali-form-${visitId}`);
                         if (form) {
                             form.submit();
                         }

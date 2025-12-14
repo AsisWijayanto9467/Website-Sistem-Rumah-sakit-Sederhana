@@ -46,8 +46,6 @@ class DokterSeeder extends Seeder
         ];
 
         foreach ($dokters as $data) {
-
-            // 1️⃣ Insert ke tabel users
             $user = User::create([
                 'nama' => $data['nama'],
                 'email' => $data['email'],
@@ -55,7 +53,6 @@ class DokterSeeder extends Seeder
                 'role' => 'doctor',
             ]);
 
-            // 2️⃣ Insert ke tabel doctors
             Doctors::create([
                 'user_id' => $user->id,
                 'nama' => $data['nama'],

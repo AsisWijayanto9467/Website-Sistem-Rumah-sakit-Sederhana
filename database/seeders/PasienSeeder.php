@@ -23,7 +23,6 @@ class PasienSeeder extends Seeder
             'password' => Hash::make('password123')
         ]);
 
-        // === 2. Buat Pasien (Relasi ke user) ===
         Patients::create([
             'user_id'           => $user->id,
             'nama'              => 'Budi Santoso',
@@ -38,7 +37,6 @@ class PasienSeeder extends Seeder
             'nomor_identitas'   => '1234567891234567',
         ]);
 
-        // >>> Jika mau tambah sample lain, copy block bawah ini:
 
         $user2 = User::create([
             'nama' => 'Siti Aminah',
@@ -58,6 +56,27 @@ class PasienSeeder extends Seeder
             'tanggal_registrasi'=> Carbon::now()->format('Y-m-d'),
             'waktu_daftar'      => Carbon::now()->format('Y-m-d H:i:s'),
             'kota'              => 'Bandung',
+            'nomor_identitas'   => '9876543219876543',
+        ]);
+
+        $user3 = User::create([
+            'nama' => 'Warto Wiranto',
+            'email' => 'warto@example.com',
+            'role' => 'patient',
+            'password' => Hash::make('password123')
+        ]);
+
+        Patients::create([
+            'user_id'           => $user3->id,
+            'nama'              => 'Warto Wiranto',
+            'nomor_telpon'      => '08987654321',
+            'gender'            => 'laki-laki',
+            'tipe_darah'        => 'O',
+            'tanggal_lahir'     => '2001-03-24',
+            'alamat'            => 'Jl. Merdeka No. 10',
+            'tanggal_registrasi'=> Carbon::now()->format('Y-m-d'),
+            'waktu_daftar'      => Carbon::now()->format('Y-m-d H:i:s'),
+            'kota'              => 'Jakarta',
             'nomor_identitas'   => '9876543219876543',
         ]);
     }

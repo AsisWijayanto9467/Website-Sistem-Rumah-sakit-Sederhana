@@ -7,6 +7,7 @@ use App\Http\Controllers\DokterController;
 use App\Http\Controllers\KunjunganController;
 use App\Http\Controllers\MedicationController;
 use App\Http\Controllers\PasienController;
+use App\Http\Controllers\PengaturanController;
 use App\Http\Controllers\PoliklinikController;
 use App\Http\Controllers\ServiceController;
 use Illuminate\Support\Facades\Route;
@@ -17,6 +18,12 @@ Route::get('/logout', [AuthController::class, 'logout'])->name('logout');
 
 Route::middleware(['auth'])->group(function () {
     Route::get('/admin/Beranda', [BerandaController::class, 'index'])->name('admin.beranda');
+
+    // Pengaturan
+    Route::get('/profile', [PengaturanController::class, 'index'])->name('profile.index');
+    Route::put('/profile', [PengaturanController::class, 'update'])->name('profile.update');
+    Route::get('/password/edit', [PengaturanController::class, 'indexPassword'])->name('password.edit');
+    Route::put('/password/update', [PengaturanController::class, 'ubah_password'])->name('password.update');
 
     // Halaman pasien
     Route::get('/admin/pasien',[PasienController::class, 'index'])->name('pasien.index');
@@ -55,7 +62,7 @@ Route::middleware(['auth'])->group(function () {
 
     // Halaman pasien
     Route::get('/admin/services',[ServiceController::class, 'index'])->name('services.index');
-    Route::get('/admin/services',[ServiceController::class, 'create'])->name('services.create');
+    Route::get('/admin/services/create',[ServiceController::class, 'create'])->name('services.create');
     Route::post('/admin/services',[ServiceController::class, 'store'])->name('services.store');
     Route::get('/admin/service/{id}',[ServiceController::class, 'edit'])->name('service.edit');
     Route::put('/admin/service/{id}',[ServiceController::class, 'update'])->name('service.update');
@@ -64,10 +71,15 @@ Route::middleware(['auth'])->group(function () {
     // Halaman Kunjungan
     Route::get('/admin/kunjungan/pending',[KunjunganController::class, 'pending'])->name('kunjungan.pending');
     Route::get('/admin/kunjungan/completed',[KunjunganController::class, 'completed'])->name('kunjungan.completed');
+    Route::get('/admin/kunjungan/not-approved',[KunjunganController::class, 'notApproved'])->name('kunjungan.notApproved');
     Route::get('/admin/kunjungan',[KunjunganController::class, 'create'])->name('kunjungan.create');
     Route::post('/admin/kunjungan',[KunjunganController::class, 'store'])->name('kunjungan.store');
+    Route::put('/admin/kunjungan/approved/{id}',[KunjunganController::class, 'approve'])->name('kunjungan.approve');
+    Route::put('/admin/kunjungan/reject/{id}',[KunjunganController::class, 'reject'])->name('kunjungan.reject');
+    Route::put('/admin/kunjungan/cencle-approved/{id}',[KunjunganController::class, 'cancelApproval'])->name('kunjungan.cancelApproval');
+    Route::put('/admin/kunjungan/approve-kembali/{id}', [KunjunganController::class, 'approveKembali'])->name('kunjungan.approve-kembali');
     Route::put('/admin/kunjungan/{id}',[KunjunganController::class, 'update'])->name('kunjungan.update');
-    Route::put('/admin/kunjungan/{id}',[KunjunganController::class, 'edit'])->name('kunjungan.edit');
+    Route::get('/admin/kunjungan/{id}',[KunjunganController::class, 'edit'])->name('kunjungan.edit');
     Route::delete('/admin/kunjungan/{id}',[KunjunganController::class, 'destroy'])->name('kunjungan.destroy');
     
     // Halaman Kunjungan

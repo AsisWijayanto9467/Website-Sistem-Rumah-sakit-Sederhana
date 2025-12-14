@@ -10,10 +10,30 @@ class ServiceController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $services = Services::latest()->paginate(10);
-        return view('layanan.service.index', compact('services'));
+        $search = $request->input('search');
+        $perPage = $request->input('per_page', 10);
+        $query = Services::query();
+
+        if($search) {
+            $query->where(function($q) use ($search) {
+                $q  ->where('jenis_layanan',  'LIKE', "%{$search}")
+                    ->orWhere('harga', 'LIKE', "%{$search}")
+                    ->orWhere('status', 'LIKE', "%{$search}")
+                    ->orWhere('catatan', 'LIKE', "%{$search}");
+            });
+        }
+
+        $services = $query->latest()->paginate($perPage);
+        if($search) {
+            $services->appends(['search' => $search]);
+        }
+        if($request->has('per_page')) {
+            $services->appends(['per_page' => $perPage]);
+        }
+
+        return view('layanan.service.index', compact('services', 'search'));
     }
 
     /**
@@ -30,10 +50,10 @@ class ServiceController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'nama_klinik' => 'required|string|max:255',
-            'tipe_layanan' => 'required|string|max:255',
+            'jenis_layanan' => 'required|string|max:255',
             'harga' => 'required|numeric|min:0',
-            'deskripsi' => 'nullable|string'
+            'status' => 'required|in:aktif,tidak aktif',
+            'catatan' => 'nullable|string'
         ]);
 
         Services::create($request->all());
@@ -66,10 +86,10 @@ class ServiceController extends Controller
         $service = Services::findOrFail($id);
 
         $request->validate([
-            'nama_klinik' => 'required|string|max:255',
-            'tipe_layanan' => 'required|string|max:255',
+            'jenis_layanan' => 'required|string|max:255',
+            'status' => 'required|in:aktif,tidak aktif',
             'harga' => 'required|numeric|min:0',
-            'deskripsi' => 'nullable|string'
+            'catatan' => 'nullable|string'
         ]);
 
         $service->update($request->all());

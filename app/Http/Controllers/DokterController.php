@@ -71,6 +71,7 @@ class DokterController extends Controller
             'nama'     => $request->nama,
             'email'    => $request->email,
             'role'     => 'doctor',
+            'nomor_telpon' => $request->nomor_telpon,
             'password' => Hash::make($request->password),
         ]);
 

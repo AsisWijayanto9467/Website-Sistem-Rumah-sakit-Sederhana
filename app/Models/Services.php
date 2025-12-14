@@ -9,10 +9,10 @@ class Services extends Model
     protected $table = 'services';
 
     protected $fillable = [
-        'nama_klinik',
-        'tipe_layanan',
+        'jenis_layanan',
         'harga',
-        'deskripsi'
+        'status',
+        'catatan'
     ];
 
     protected $casts = [

@@ -116,7 +116,7 @@
                             <input type="number" id="tarif_konsultasi" name="tarif_konsultasi" value="{{ old('tarif_konsultasi', $dokter->tarif_konsultasi) }}"
                                 class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition"
                                 placeholder="Misal: 450000"
-                                >
+                                > 
                             @error('tarif_konsultasi')
                                 <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                             @enderror

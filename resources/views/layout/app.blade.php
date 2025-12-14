@@ -219,7 +219,7 @@
     <!-- Sidebar - Diperbesar menjadi w-80 (320px) -->
     <aside id="sidebar"
         class="bg-slate-800 text-slate-100 w-80 min-h-screen flex flex-col shadow-xl transition-all duration-300 fixed lg:static z-40 -translate-x-full lg:translate-x-0">
-        <!-- Sidebar Header - Diperbesar -->
+        
         <div class="p-7 border-b border-slate-700 flex-shrink-0">
             <div class="flex items-center space-x-4">
                 <div
@@ -264,13 +264,13 @@
                             <i class="fas fa-calendar-plus mr-3 text-base"></i>
                             <span>Tambah Kunjungan</span>
                         </a>
-                        <a href="{{ route('kunjungan.pending') }}"
+                        <a href="{{ route('kunjungan.notApproved') }}"
                             class="submenu-item flex items-center py-3 px-4 rounded-lg hover:bg-slate-700 transition-colors duration-200 text-slate-300 hover:text-white inactive"
                             data-submenu="kunjungan-tertunda" data-route="kunjungan.pending">
                             <i class="fas fa-clock mr-3 text-base"></i>
                             <span>Kunjungan Tertunda</span>
                         </a>
-                        <a href="{{ route('kunjungan.completed') }}"
+                        <a href="{{ route('kunjungan.pending') }}"
                             class="submenu-item flex items-center py-3 px-4 rounded-lg hover:bg-slate-700 transition-colors duration-200 text-slate-300 hover:text-white inactive"
                             data-submenu="kunjungan-disetujui" data-route="kunjungan.completed">
                             <i class="fas fa-check-circle mr-3 text-base"></i>
@@ -366,7 +366,7 @@
                             <i class="fas fa-stethoscope mr-3 text-base"></i>
                             <span>Tambah Jenis Pelayanan</span>
                         </a>
-                        <a href="{{ route('services.create') }}"
+                        <a href="{{ route('services.index') }}"
                             class="submenu-item flex items-center py-3 px-4 rounded-lg hover:bg-slate-700 transition-colors duration-200 text-slate-300 hover:text-white inactive"
                             data-submenu="data-jenis-pelayanan" data-route="layanan.index">
                             <i class="fas fa-tasks mr-3 text-base"></i>
@@ -455,8 +455,8 @@
                                 <i class="fas fa-user text-white"></i>
                             </div>
                             <div class="hidden sm:block text-left">
-                                <p class="text-sm font-medium text-gray-900">Dr. John Smith</p>
-                                <p class="text-xs text-gray-500">Administrator</p>
+                                <p class="text-sm font-medium text-gray-900">{{ auth()->user()->nama }}</p>
+                                <p class="text-xs text-gray-500">{{ auth()->user()->role }}</p>
                             </div>
                             <i class="fas fa-chevron-down text-gray-500 hidden sm:block"></i>
                         </button>
@@ -465,20 +465,15 @@
                         <div
                             class="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-200 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 z-50">
                             <div class="py-1">
-                                <a href=""
+                                <a href="{{ route('profile.index') }}"
                                     class="flex items-center px-4 py-3 text-sm text-gray-700 hover:bg-gray-100">
                                     <i class="fas fa-user-circle mr-3"></i>
                                     Profil Saya
                                 </a>
-                                <a href=""
+                                <a href="{{ route("password.edit") }}"
                                     class="flex items-center px-4 py-3 text-sm text-gray-700 hover:bg-gray-100">
                                     <i class="fas fa-cog mr-3"></i>
-                                    Pengaturan
-                                </a>
-                                <a href=""
-                                    class="flex items-center px-4 py-3 text-sm text-gray-700 hover:bg-gray-100">
-                                    <i class="fas fa-question-circle mr-3"></i>
-                                    Bantuan
+                                    Ubah Password
                                 </a>
                                 <hr class="my-1 border-gray-200">
                                 <a href=""
@@ -503,7 +498,6 @@
     
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            //======= SIDEBAR MOBILE TOGGLE ==========
             const sidebarToggle = document.getElementById('sidebarToggle');
             const sidebar = document.getElementById('sidebar');
             const toggleIcon = document.getElementById('toggleIcon');
@@ -522,20 +516,15 @@
                 });
             }
 
-            //========= SISTEM MENU AKTIF BERDASARKAN URL/HREF ==========
-            
-            // Fungsi untuk mendapatkan route name dari URL
             function getCurrentRouteFromURL() {
                 const currentPath = window.location.pathname;
                 
-                // Cari semua link yang ada di sidebar
                 const allLinks = document.querySelectorAll('.menu-item, .submenu-item');
                 
                 for (let link of allLinks) {
                     if (link.href) {
                         const linkUrl = new URL(link.href);
                         if (linkUrl.pathname === currentPath) {
-                            // Jika ini adalah submenu item
                             if (link.classList.contains('submenu-item')) {
                                 return {
                                     type: 'submenu',
@@ -543,7 +532,6 @@
                                     element: link
                                 };
                             } else {
-                                // Jika ini adalah menu item
                                 return {
                                     type: 'menu',
                                     value: link.getAttribute('data-menu'),
@@ -554,11 +542,9 @@
                     }
                 }
                 
-                // Jika tidak ditemukan, coba cek berdasarkan data-route
                 for (let link of allLinks) {
                     const route = link.getAttribute('data-route');
                     if (route) {
-                        // Simple check - bisa dikembangkan lebih lanjut
                         if (currentPath.includes(route.replace('.', '/'))) {
                             if (link.classList.contains('submenu-item')) {
                                 return {
@@ -607,15 +593,12 @@
                             }
                         }
                     } else if (currentRoute.type === 'menu') {
-                        // Aktifkan menu utama
                         currentRoute.element.classList.remove('inactive');
                         currentRoute.element.classList.add('active');
                     }
                     
-                    // Simpan ke sessionStorage
                     saveActiveMenuToStorage(currentRoute.value, currentRoute.type);
                 } else {
-                    // Default: beranda aktif
                     setActiveMenu('beranda', 'menu');
                 }
             }
