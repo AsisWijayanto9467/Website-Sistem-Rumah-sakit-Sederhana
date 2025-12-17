@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Medications;
-use App\Models\Visit_Details;
+use App\Models\VisitDetails;
 use App\Models\Visits;
 use Illuminate\Http\Request;
 
@@ -12,7 +12,7 @@ class DetailKunjunganController extends Controller
     public function index($visit_id)
     {
         $visit = Visits::with('patient','doctor','service')->findOrFail($visit_id);
-        $details = Visit_Details::with('medication')
+        $details = VisitDetails::with('medication')
             ->where('visit_id', $visit_id)
             ->latest()
             ->get();
@@ -40,7 +40,7 @@ class DetailKunjunganController extends Controller
             'quantity' => 'nullable|integer|min:1',
         ]);
 
-        Visit_Details::create([
+        VisitDetails::create([
             'visit_id' => $visit_id,
             'diagnosis' => $request->diagnosis,
             'layanan' => $request->layanan,
@@ -55,7 +55,7 @@ class DetailKunjunganController extends Controller
 
     public function edit($id)
     {
-        $detail = Visit_Details::findOrFail($id);
+        $detail = VisitDetails::findOrFail($id);
         $visit = $detail->visit;
         $medications = Medications::all();
 
@@ -65,7 +65,7 @@ class DetailKunjunganController extends Controller
 
     public function update(Request $request, $id)
     {
-        $detail = Visit_Details::findOrFail($id);
+        $detail = VisitDetails::findOrFail($id);
 
         $request->validate([
             'diagnosis' => 'required',
@@ -89,7 +89,7 @@ class DetailKunjunganController extends Controller
 
     public function destroy($id)
     {
-        $detail = Visit_Details::findOrFail($id);
+        $detail = VisitDetails::findOrFail($id);
         $visit_id = $detail->visit_id;
         $detail->delete();
 

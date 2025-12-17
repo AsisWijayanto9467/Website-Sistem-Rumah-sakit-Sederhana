@@ -123,14 +123,18 @@
                                 Harga
                             </th>
                             <th scope="col" class="px-6 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
-                                Status
-                            </th>
-                            <th scope="col" class="px-6 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
                                 Catatan
                             </th>
                             <th scope="col" class="px-6 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
-                                Aksi
+                                Status
                             </th>
+                            @auth
+                                @if (Auth::user()->role === 'admin')
+                                    <th scope="col" class="px-6 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
+                                        Aksi
+                                    </th>
+                                @endif
+                            @endauth
                         </tr>
                     </thead>
                     <tbody class="bg-gray-50 divide-y divide-gray-100">
@@ -160,6 +164,19 @@
                                 </div>
                             </td>
 
+                            <!-- Column 4: Deskripsi -->
+                            <td class="px-6 py-4">
+                                <div class="space-y-1">
+                                    @if($layanan->catatan)
+                                    <div class="text-sm text-gray-800 max-w-md">
+                                        {{ Str::limit($layanan->catatan, 120) }}
+                                    </div>
+                                    @else
+                                    <span class="text-sm text-gray-500 italic">Tidak ada catatan</span>
+                                    @endif
+                                </div>
+                            </td>
+
                             <!-- Column 3: Status -->
                             <td class="px-6 py-4">
                                 <div class="space-y-1">
@@ -177,42 +194,34 @@
                                 </div>
                             </td>
 
-                            <!-- Column 4: Deskripsi -->
-                            <td class="px-6 py-4">
-                                <div class="space-y-1">
-                                    @if($layanan->catatan)
-                                    <div class="text-sm text-gray-800 max-w-md">
-                                        {{ Str::limit($layanan->catatan, 120) }}
-                                    </div>
-                                    @else
-                                    <span class="text-sm text-gray-500 italic">Tidak ada catatan</span>
-                                    @endif
-                                </div>
-                            </td>
-
-                            <!-- Column 5: Aksi -->
-                            <td class="px-6 py-4">
-                                <div class="space-y-2 min-w-[120px]">
-                                    <!-- Edit and Delete Buttons Side by Side -->
-                                    <div class="flex space-x-2">
-                                        <!-- Edit Button -->
-                                        <a href="{{ route('service.edit', $layanan->id) }}" 
-                                           class="inline-flex items-center justify-center px-3 py-1.5 bg-blue-600 text-white text-sm font-medium rounded hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1 transition flex-1">
-                                            <i class="fas fa-edit mr-1.5 text-xs"></i>
-                                            Edit
-                                        </a>
-                                        
-                                        <!-- Delete Button -->
-                                        <button type="button" 
-                                                onclick="confirmDelete({{ $layanan->id }})"
-                                                class="inline-flex items-center justify-center px-3 py-1.5 bg-red-600 text-white text-sm font-medium rounded hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-1 transition flex-1">
-                                            <i class="fas fa-trash mr-1.5 text-xs"></i>
-                                            Hapus
-                                        </button>
-                                    </div>
-                                    
-                                </div>
-                            </td>
+                            
+                            @auth
+                                @if (Auth::user()->role === 'admin')
+                                    <!-- Column 5: Aksi -->
+                                    <td class="px-6 py-4">
+                                        <div class="space-y-2 min-w-[120px]">
+                                            <!-- Edit and Delete Buttons Side by Side -->
+                                            <div class="flex space-x-2">
+                                                <!-- Edit Button -->
+                                                <a href="{{ route('service.edit', $layanan->id) }}" 
+                                                class="inline-flex items-center justify-center px-3 py-1.5 bg-blue-600 text-white text-sm font-medium rounded hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1 transition flex-1">
+                                                    <i class="fas fa-edit mr-1.5 text-xs"></i>
+                                                    Edit
+                                                </a>
+                                                
+                                                <!-- Delete Button -->
+                                                <button type="button" 
+                                                        onclick="confirmDelete({{ $layanan->id }})"
+                                                        class="inline-flex items-center justify-center px-3 py-1.5 bg-red-600 text-white text-sm font-medium rounded hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-1 transition flex-1">
+                                                    <i class="fas fa-trash mr-1.5 text-xs"></i>
+                                                    Hapus
+                                                </button>
+                                            </div>
+                                            
+                                        </div>
+                                    </td>
+                                @endif
+                            @endauth
                         </tr>
                         @empty
                         <tr>
@@ -234,13 +243,17 @@
                                             Belum ada layanan yang terdaftar dalam sistem.
                                         @endif
                                     </p>
-                                    @if(!$search)
-                                    <a href="{{ route('services.create') }}" 
-                                       class="inline-flex items-center px-4 py-2 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition">
-                                        <i class="fas fa-plus mr-2"></i>
-                                        Tambah Layanan Baru
-                                    </a>
-                                    @endif
+                                    @auth
+                                        @if (Auth::user()->role === 'admin')
+                                            @if(!$search)
+                                            <a href="{{ route('services.create') }}" 
+                                            class="inline-flex items-center px-4 py-2 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition">
+                                                <i class="fas fa-plus mr-2"></i>
+                                                Tambah Layanan Baru
+                                            </a>
+                                            @endif
+                                        @endif
+                                    @endauth
                                 </div>
                             </td>
                         </tr>

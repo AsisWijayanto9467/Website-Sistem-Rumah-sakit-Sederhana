@@ -258,24 +258,39 @@
                             class="dropdown-arrow fas fa-chevron-down text-base transition-transform duration-300 rotate-0"></i>
                     </button>
                     <div class="dropdown-content max-h-0 overflow-hidden dropdown-transition ml-12 mt-2 space-y-2">
-                        <a href="{{ route('kunjungan.create') }}"
-                            class="submenu-item flex items-center py-3 px-4 rounded-lg hover:bg-slate-700 transition-colors duration-200 text-slate-300 hover:text-white inactive"
-                            data-submenu="tambah-kunjungan" data-route="kunjungan.create">
-                            <i class="fas fa-calendar-plus mr-3 text-base"></i>
-                            <span>Tambah Kunjungan</span>
-                        </a>
-                        <a href="{{ route('kunjungan.notApproved') }}"
-                            class="submenu-item flex items-center py-3 px-4 rounded-lg hover:bg-slate-700 transition-colors duration-200 text-slate-300 hover:text-white inactive"
-                            data-submenu="kunjungan-tertunda" data-route="kunjungan.pending">
-                            <i class="fas fa-clock mr-3 text-base"></i>
-                            <span>Kunjungan Tertunda</span>
-                        </a>
-                        <a href="{{ route('kunjungan.pending') }}"
-                            class="submenu-item flex items-center py-3 px-4 rounded-lg hover:bg-slate-700 transition-colors duration-200 text-slate-300 hover:text-white inactive"
-                            data-submenu="kunjungan-disetujui" data-route="kunjungan.completed">
-                            <i class="fas fa-check-circle mr-3 text-base"></i>
-                            <span>Kunjungan Disetujui</span>
-                        </a>
+                        @auth
+                            @if (Auth::user()->role === 'admin')
+                                <a href="{{ route('kunjungan.create') }}"
+                                    class="submenu-item flex items-center py-3 px-4 rounded-lg hover:bg-slate-700 transition-colors duration-200 text-slate-300 hover:text-white inactive"
+                                    data-submenu="tambah-kunjungan" data-route="kunjungan.create">
+                                    <i class="fas fa-calendar-plus mr-3 text-base"></i>
+                                    <span>Tambah Kunjungan</span>
+                                </a>
+                                <a href="{{ route('kunjungan.notApproved') }}"
+                                    class="submenu-item flex items-center py-3 px-4 rounded-lg hover:bg-slate-700 transition-colors duration-200 text-slate-300 hover:text-white inactive"
+                                    data-submenu="kunjungan-tertunda" data-route="kunjungan.pending">
+                                    <i class="fas fa-clock mr-3 text-base"></i>
+                                    <span>Kunjungan Tertunda</span>
+                                </a>
+                                <a href="{{ route('kunjungan.pending') }}"
+                                    class="submenu-item flex items-center py-3 px-4 rounded-lg hover:bg-slate-700 transition-colors duration-200 text-slate-300 hover:text-white inactive"
+                                    data-submenu="kunjungan-disetujui" data-route="kunjungan.completed">
+                                    <i class="fas fa-check-circle mr-3 text-base"></i>
+                                    <span>Kunjungan Disetujui</span>
+                                </a>
+                            @endif
+                        @endauth
+
+                        @auth
+                            @if (Auth::user()->role === 'doctor')
+                                <a href="{{ route('dokter.kunjungan') }}"
+                                    class="submenu-item flex items-center py-3 px-4 rounded-lg hover:bg-slate-700 transition-colors duration-200 text-slate-300 hover:text-white inactive"
+                                    data-submenu="kunjungan-disetujui" data-route="kunjungan.completed">
+                                    <i class="fas fa-check-circle mr-3 text-base"></i>
+                                    <span>Kunjungan Yang disetujui</span>
+                                </a>
+                            @endif
+                        @endauth
                     </div>
                 </div>
 
@@ -292,18 +307,38 @@
                             class="dropdown-arrow fas fa-chevron-down text-base transition-transform duration-300 rotate-0"></i>
                     </button>
                     <div class="dropdown-content max-h-0 overflow-hidden dropdown-transition ml-12 mt-2 space-y-2">
-                        <a href="{{ route('dokter.create') }}"
-                            class="submenu-item flex items-center py-3 px-4 rounded-lg hover:bg-slate-700 transition-colors duration-200 text-slate-300 hover:text-white inactive"
-                            data-submenu="tambah-dokter" data-route="dokter.create">
-                            <i class="fas fa-user-plus mr-3 text-base"></i>
-                            <span>Tambah Dokter</span>
-                        </a>
-                        <a href="{{ route('dokter.index') }}"
-                            class="submenu-item flex items-center py-3 px-4 rounded-lg hover:bg-slate-700 transition-colors duration-200 text-slate-300 hover:text-white inactive"
-                            data-submenu="data-dokter" data-route="dokter.index">
-                            <i class="fas fa-list-alt mr-3 text-base"></i>
-                            <span>Data Dokter</span>
-                        </a>
+                        @auth
+                            @if (Auth::user()->role === 'admin')
+                                <a href="{{ route('dokter.create') }}"
+                                    class="submenu-item flex items-center py-3 px-4 rounded-lg hover:bg-slate-700 transition-colors duration-200 text-slate-300 hover:text-white inactive"
+                                    data-submenu="tambah-dokter" data-route="dokter.create">
+                                    <i class="fas fa-user-plus mr-3 text-base"></i>
+                                    <span>Tambah Dokter</span>
+                                </a>
+                                <a href="{{ route('dokter.index') }}"
+                                    class="submenu-item flex items-center py-3 px-4 rounded-lg hover:bg-slate-700 transition-colors duration-200 text-slate-300 hover:text-white inactive"
+                                    data-submenu="data-dokter" data-route="dokter.index">
+                                    <i class="fas fa-list-alt mr-3 text-base"></i>
+                                    <span>Data Dokter</span>
+                                </a>
+                            @endif
+                        @endauth
+                        @auth
+                            @if (Auth::user()->role === 'doctor')
+                                <a href="{{ route('jadwals.create') }}"
+                                    class="submenu-item flex items-center py-3 px-4 rounded-lg hover:bg-slate-700 transition-colors duration-200 text-slate-300 hover:text-white inactive"
+                                    data-submenu="tambah-jam_kunjungan" data-route="dokter.create.kunjungan">
+                                    <i class="fas fa-clock mr-3 text-base"></i>
+                                    <span>Tambah Jam Kunjungan</span>
+                                </a>
+                                <a href="{{ route('jadwals.index') }}"
+                                    class="submenu-item flex items-center py-3 px-4 rounded-lg hover:bg-slate-700 transition-colors duration-200 text-slate-300 hover:text-white inactive"
+                                    data-submenu="data-jam_kunjungan" data-route="dokter.index.kunjungan">
+                                    <i class="fas fa-calendar-alt mr-3 text-base"></i>
+                                    <span>Data Jam Kunjungan</span>
+                                </a>
+                            @endif
+                        @endauth
                     </div>
                 </div>
 
@@ -320,18 +355,32 @@
                             class="dropdown-arrow fas fa-chevron-down text-base transition-transform duration-300 rotate-0"></i>
                     </button>
                     <div class="dropdown-content max-h-0 overflow-hidden dropdown-transition ml-12 mt-2 space-y-2">
-                        <a href="{{ route('pasien.create') }}"
-                            class="submenu-item flex items-center py-3 px-4 rounded-lg hover:bg-slate-700 transition-colors duration-200 text-slate-300 hover:text-white inactive"
-                            data-submenu="tambah-pasien" data-route="pasien.create">
-                            <i class="fas fa-user-plus mr-3 text-base"></i>
-                            <span>Tambah Pasien</span>
-                        </a>
-                        <a href="{{ route('pasien.index') }}"
-                            class="submenu-item flex items-center py-3 px-4 rounded-lg hover:bg-slate-700 transition-colors duration-200 text-slate-300 hover:text-white inactive"
-                            data-submenu="data-pasien" data-route="pasien.index">
-                            <i class="fas fa-list-alt mr-3 text-base"></i>
-                            <span>Data Pasien</span>
-                        </a>
+                        @auth
+                            @if (Auth::user()->role === 'admin')
+                                <a href="{{ route('pasien.create') }}"
+                                    class="submenu-item flex items-center py-3 px-4 rounded-lg hover:bg-slate-700 transition-colors duration-200 text-slate-300 hover:text-white inactive"
+                                    data-submenu="tambah-pasien" data-route="pasien.create">
+                                    <i class="fas fa-user-plus mr-3 text-base"></i>
+                                    <span>Tambah Pasien</span>
+                                </a>
+                                <a href="{{ route('pasien.index') }}"
+                                    class="submenu-item flex items-center py-3 px-4 rounded-lg hover:bg-slate-700 transition-colors duration-200 text-slate-300 hover:text-white inactive"
+                                    data-submenu="data-pasien" data-route="pasien.index">
+                                    <i class="fas fa-list-alt mr-3 text-base"></i>
+                                    <span>Data Pasien</span>
+                                </a>
+                            @endif
+                        @endauth
+                        @auth
+                            @if (Auth::user()->role === 'doctor')
+                                <a href="{{ route('dokter.showPasien') }}"
+                                    class="submenu-item flex items-center py-3 px-4 rounded-lg hover:bg-slate-700 transition-colors duration-200 text-slate-300 hover:text-white inactive"
+                                    data-submenu="data-pasien" data-route="pasien.index">
+                                    <i class="fas fa-list-alt mr-3 text-base"></i>
+                                    <span>Data Pasien</span>
+                                </a>
+                            @endif
+                        @endauth
                     </div>
                 </div>
 
@@ -348,36 +397,52 @@
                             class="dropdown-arrow fas fa-chevron-down text-base transition-transform duration-300 rotate-0"></i>
                     </button>
                     <div class="dropdown-content max-h-0 overflow-hidden dropdown-transition ml-12 mt-2 space-y-2">
-                        <a href="{{ route('poliklinik.create') }}"
-                            class="submenu-item flex items-center py-3 px-4 rounded-lg hover:bg-slate-700 transition-colors duration-200 text-slate-300 hover:text-white inactive"
-                            data-submenu="tambah-poliklinik" data-route="poliklinik.create">
-                            <i class="fas fa-hospital mr-3 text-base"></i>
-                            <span>Tambah Poliklinik</span>
-                        </a>
-                        <a href="{{ route('poliklinik.index') }}"
-                            class="submenu-item flex items-center py-3 px-4 rounded-lg hover:bg-slate-700 transition-colors duration-200 text-slate-300 hover:text-white inactive"
-                            data-submenu="data-poliklinik" data-route="poliklinik.index">
-                            <i class="fas fa-list mr-3 text-base"></i>
-                            <span>Data Poliklinik</span>
-                        </a>
-                        <a href="{{ route('services.create') }}"
-                            class="submenu-item flex items-center py-3 px-4 rounded-lg hover:bg-slate-700 transition-colors duration-200 text-slate-300 hover:text-white inactive"
-                            data-submenu="tambah-jenis-pelayanan" data-route="layanan.create">
-                            <i class="fas fa-stethoscope mr-3 text-base"></i>
-                            <span>Tambah Jenis Pelayanan</span>
-                        </a>
+                        @auth
+                            @if(Auth::user()->role === 'admin')
+                                <a href="{{ route('poliklinik.create') }}"
+                                    class="submenu-item flex items-center py-3 px-4 rounded-lg hover:bg-slate-700 transition-colors duration-200 text-slate-300 hover:text-white inactive"
+                                    data-submenu="tambah-poliklinik" data-route="poliklinik.create">
+                                    <i class="fas fa-hospital mr-3 text-base"></i>
+                                    <span>Tambah Poliklinik</span>
+                                </a>
+                            @endif
+                        @endauth
+                        @auth
+                            @if(Auth::user()->role === 'admin')
+                               <a href="{{ route('poliklinik.index') }}"
+                                    class="submenu-item flex items-center py-3 px-4 rounded-lg hover:bg-slate-700 transition-colors duration-200 text-slate-300 hover:text-white inactive"
+                                    data-submenu="data-poliklinik" data-route="poliklinik.index">
+                                    <i class="fas fa-list mr-3 text-base"></i>
+                                    <span>Data Poliklinik</span>
+                                </a>
+                            @endif
+                        @endauth
+                        @auth
+                            @if(Auth::user()->role === 'admin')
+                               <a href="{{ route('services.create') }}"
+                                    class="submenu-item flex items-center py-3 px-4 rounded-lg hover:bg-slate-700 transition-colors duration-200 text-slate-300 hover:text-white inactive"
+                                    data-submenu="tambah-jenis-pelayanan" data-route="layanan.create">
+                                    <i class="fas fa-stethoscope mr-3 text-base"></i>
+                                    <span>Tambah Jenis Pelayanan</span>
+                                </a>
+                            @endif
+                        @endauth
                         <a href="{{ route('services.index') }}"
                             class="submenu-item flex items-center py-3 px-4 rounded-lg hover:bg-slate-700 transition-colors duration-200 text-slate-300 hover:text-white inactive"
                             data-submenu="data-jenis-pelayanan" data-route="layanan.index">
                             <i class="fas fa-tasks mr-3 text-base"></i>
                             <span>Data Jenis Pelayanan</span>
                         </a>
-                        <a href="{{ route('medication.create') }}"
-                            class="submenu-item flex items-center py-3 px-4 rounded-lg hover:bg-slate-700 transition-colors duration-200 text-slate-300 hover:text-white inactive"
-                            data-submenu="tambah-obat" data-route="obat.create">
-                            <i class="fas fa-pills mr-3 text-base"></i>
-                            <span>Tambah Obat</span>
-                        </a>
+                        @auth
+                            @if(Auth::user()->role === 'admin')
+                               <a href="{{ route('medication.create') }}"
+                                    class="submenu-item flex items-center py-3 px-4 rounded-lg hover:bg-slate-700 transition-colors duration-200 text-slate-300 hover:text-white inactive"
+                                    data-submenu="tambah-obat" data-route="obat.create">
+                                    <i class="fas fa-pills mr-3 text-base"></i>
+                                    <span>Tambah Obat</span>
+                                </a>
+                            @endif
+                        @endauth
                         <a href="{{ route('medication.index') }}"
                             class="submenu-item flex items-center py-3 px-4 rounded-lg hover:bg-slate-700 transition-colors duration-200 text-slate-300 hover:text-white inactive"
                             data-submenu="data-obat" data-route="obat.index">

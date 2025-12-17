@@ -18,10 +18,10 @@ class MedicationController extends Controller
 
         if($search) {
             $query->where(function($q) use ($search) {
-                $q  ->where('nama',  'LIKE', "%{$search}")
-                    ->orWhere('harga', 'LIKE', "%{$search}")
-                    ->orWhere('deskripsi', 'LIKE', "%{$search}")
-                    ->orWhere('stock', 'LIKE', "%{$search}");
+                $q  ->where('nama',  'LIKE', "%{$search}%")
+                    ->orWhere('harga', 'LIKE', "%{$search}%")
+                    ->orWhere('deskripsi', 'LIKE', "%{$search}%")
+                    ->orWhere('stock', 'LIKE', "%{$search}%");
             });
         }
 

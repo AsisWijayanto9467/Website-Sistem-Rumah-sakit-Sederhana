@@ -19,11 +19,11 @@ class Medications extends Model
         'harga' => 'decimal:2'
     ];
 
-    public function visitDetails() {
-        return $this->hasMany(Visit_Details::class);
-    }
-
-    public function visit_details() {
-        return $this->hasMany(Visit_Details::class,'medication_id');
+    public function visitDetails()
+    {
+        return $this->belongsToMany(
+            VisitDetails::class,
+            'visit_detail_medications'
+        )->withPivot('quantity', 'aturan_pakai');
     }
 }

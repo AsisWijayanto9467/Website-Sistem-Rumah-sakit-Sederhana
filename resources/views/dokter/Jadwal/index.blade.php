@@ -1,24 +1,26 @@
 @extends('layout.app')
 
-@section('title','Data Poliklinik')
-@section('page-title','Tabel Poliklinik')
+@section('title', 'Jadwal Kunjungan')
+@section('page-title', 'Jadwal Kunjungan Saya')
 
 @section('content')
     <div class="container mx-auto px-4 py-6">
+        <!-- Page Header -->
         <div class="mb-6">
             <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
                 <div>
-                    <h1 class="text-2xl font-bold text-gray-900">Data Poliklinik</h1>
-                    <p class="text-gray-600 mt-1">Kelola data poliklinik yang tersedia di sistem</p>
+                    <h1 class="text-2xl font-bold text-gray-900">Jadwal Kunjungan</h1>
+                    <p class="text-gray-600 mt-1">Kelola jadwal kunjungan pasien Anda</p>
                 </div>
-                <a href="{{ route('poliklinik.create') }}" 
+                <a href="{{ route('jadwals.create') }}" 
                    class="inline-flex items-center px-4 py-2.5 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition">
                     <i class="fas fa-plus mr-2"></i>
-                    Tambah Poliklinik
+                    Tambah Jadwal
                 </a>
             </div>
         </div>
 
+        <!-- Success Notification -->
         @if(session('success'))
         <div class="mb-6 p-4 bg-green-50 border border-green-200 rounded-lg">
             <div class="flex items-center">
@@ -48,8 +50,10 @@
         <div class="bg-white rounded-xl border border-gray-200 shadow-sm mb-6">
             <div class="p-6">
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <!-- Entries Per Page & Search Bar Side by Side -->
                     <div class="md:col-span-3">
                         <div class="flex flex-col sm:flex-row items-start sm:items-center gap-6">
+                            <!-- Search Bar dengan Button -->
                             <div class="flex-1">
                                 <div class="flex gap-2">
                                     <div class="relative flex-1">
@@ -60,7 +64,7 @@
                                             id="searchInput" 
                                             name="search"
                                             value="{{ $search }}"
-                                            placeholder="Cari berdasarkan nama, deskripsi, atau status..." 
+                                            placeholder="Cari berdasarkan jam, atau status..." 
                                             class="w-full pl-10 pr-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition text-sm"
                                             onkeypress="handleSearchKeyPress(event)">
                                         @if($search)
@@ -81,6 +85,8 @@
                                     </button>
                                 </div>
                             </div>
+
+                            <!-- Entries Per Page -->
                             <div class="flex items-center gap-2">
                                 <label for="perPage" class="text-sm font-medium text-gray-700 whitespace-nowrap">
                                     Tampilkan:
@@ -103,23 +109,24 @@
             </div>
         </div>
 
-        <!-- Poliklinik Table Card -->
+        <!-- Jadwal Kunjungan Table Card -->
         <div class="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
+            <!-- Table -->
             <div class="overflow-x-auto">
                 <table class="min-w-full divide-y divide-gray-200">
                     <thead class="bg-gray-50">
                         <tr>
                             <th scope="col" class="px-6 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
-                                Nama Poliklinik
+                                Jam Mulai
                             </th>
                             <th scope="col" class="px-6 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
-                                Deskripsi
+                                Jam Selesai
+                            </th>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
+                                Durasi
                             </th>
                             <th scope="col" class="px-6 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
                                 Status
-                            </th>
-                            <th scope="col" class="px-6 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
-                                Tanggal Dibuat
                             </th>
                             <th scope="col" class="px-6 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
                                 Aksi
@@ -127,34 +134,55 @@
                         </tr>
                     </thead>
                     <tbody class="bg-gray-50 divide-y divide-gray-100">
-                        @forelse($polikliniks as $poliklinik)
+                        @forelse($jamKunjungan as $jadwal)
                         <tr class="hover:bg-gray-100 transition-colors">
-                            <!-- Column 1: Nama Poliklinik -->
+                            <!-- Column 1: Jam Mulai -->
                             <td class="px-6 py-4">
                                 <div class="space-y-1">
                                     <div class="text-sm font-semibold text-gray-900">
-                                        {{ $poliklinik->nama_poli }}
+                                        <i class="fas fa-clock mr-2 text-blue-600"></i>
+                                        {{ \Carbon\Carbon::parse($jadwal->jam_mulai)->format('H:i') }}
+                                    </div>
+                                    <div class="text-xs text-gray-500">
+                                        {{ \Carbon\Carbon::parse($jadwal->created_at)->format('d/m/Y') }}
                                     </div>
                                 </div>
                             </td>
 
-                            <!-- Column 2: Deskripsi -->
+                            <!-- Column 2: Jam Selesai -->
                             <td class="px-6 py-4">
                                 <div class="space-y-1">
-                                    @if($poliklinik->deskripsi)
-                                    <div class="text-sm text-gray-800 max-w-md">
-                                        {{ Str::limit($poliklinik->deskripsi, 150) }}
+                                    <div class="text-sm font-semibold text-gray-900">
+                                        <i class="fas fa-clock mr-2 text-green-600"></i>
+                                        {{ \Carbon\Carbon::parse($jadwal->jam_selesai)->format('H:i') }}
                                     </div>
-                                    @else
-                                    <span class="text-sm text-gray-500 italic">Tidak ada deskripsi</span>
-                                    @endif
+                                    <div class="text-xs text-gray-500">
+                                        {{ \Carbon\Carbon::parse($jadwal->created_at)->format('d/m/Y') }}
+                                    </div>
                                 </div>
                             </td>
 
-                            <!-- Column 3: Status -->
+                            <!-- Column 3: Durasi -->
                             <td class="px-6 py-4">
                                 <div class="space-y-1">
-                                    @if($poliklinik->status == 'aktif')
+                                    @php
+                                        $jamMulai = \Carbon\Carbon::parse($jadwal->jam_mulai);
+                                        $jamSelesai = \Carbon\Carbon::parse($jadwal->jam_selesai);
+                                        $durasi = $jamMulai->diff($jamSelesai);
+                                    @endphp
+                                    <div class="text-sm font-medium text-gray-800">
+                                        {{ $durasi->format('%h jam %i menit') }}
+                                    </div>
+                                    <div class="text-xs text-gray-500">
+                                        {{ $jamMulai->format('H:i') }} - {{ $jamSelesai->format('H:i') }}
+                                    </div>
+                                </div>
+                            </td>
+
+                            <!-- Column 4: Status -->
+                            <td class="px-6 py-4">
+                                <div class="space-y-1">
+                                    @if($jadwal->status == 'aktif')
                                     <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
                                         <i class="fas fa-check-circle mr-1"></i>
                                         Aktif
@@ -168,25 +196,13 @@
                                 </div>
                             </td>
 
-                            <!-- Column 4: Tanggal Dibuat -->
-                            <td class="px-6 py-4">
-                                <div class="space-y-1">
-                                    <div class="text-sm text-gray-800">
-                                        {{ \Carbon\Carbon::parse($poliklinik->created_at)->format('d/m/Y') }}
-                                    </div>
-                                    <div class="text-xs text-gray-500">
-                                        {{ \Carbon\Carbon::parse($poliklinik->created_at)->format('H:i') }}
-                                    </div>
-                                </div>
-                            </td>
-
                             <!-- Column 5: Aksi -->
                             <td class="px-6 py-4">
                                 <div class="space-y-2 min-w-[120px]">
                                     <!-- Edit and Delete Buttons Side by Side -->
                                     <div class="flex space-x-2">
                                         <!-- Edit Button -->
-                                        <a href="{{ route('poliklinik.edit', $poliklinik->id) }}" 
+                                        <a href="{{ route('jadwal.edit', $jadwal->id) }}" 
                                            class="inline-flex items-center justify-center px-3 py-1.5 bg-blue-600 text-white text-sm font-medium rounded hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1 transition flex-1">
                                             <i class="fas fa-edit mr-1.5 text-xs"></i>
                                             Edit
@@ -194,7 +210,7 @@
                                         
                                         <!-- Delete Button -->
                                         <button type="button" 
-                                                onclick="confirmDelete({{ $poliklinik->id }})"
+                                                onclick="confirmDelete({{ $jadwal->id }}, '{{ \Carbon\Carbon::parse($jadwal->jam_mulai)->format('H:i') . ' - ' . \Carbon\Carbon::parse($jadwal->jam_selesai)->format('H:i') }}')"
                                                 class="inline-flex items-center justify-center px-3 py-1.5 bg-red-600 text-white text-sm font-medium rounded hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-1 transition flex-1">
                                             <i class="fas fa-trash mr-1.5 text-xs"></i>
                                             Hapus
@@ -208,27 +224,27 @@
                         <tr>
                             <td colspan="5" class="px-6 py-12 text-center">
                                 <div class="flex flex-col items-center justify-center">
-                                    <i class="fas fa-clinic-medical text-4xl text-gray-300 mb-4"></i>
+                                    <i class="fas fa-calendar-times text-4xl text-gray-300 mb-4"></i>
                                     <h3 class="text-lg font-medium text-gray-900 mb-2">
                                         @if($search)
                                             Hasil pencarian "{{ $search }}" tidak ditemukan
                                         @else
-                                            Tidak ada data poliklinik
+                                            Tidak ada jadwal kunjungan
                                         @endif
                                     </h3>
                                     <p class="text-gray-600 mb-6">
                                         @if($search)
                                             Coba dengan kata kunci lain atau 
-                                            <a href="{{ route('poliklinik.index') }}" class="text-blue-600 hover:underline">reset pencarian</a>
+                                            <a href="{{ route('jam-kunjungan.index') }}" class="text-blue-600 hover:underline">reset pencarian</a>
                                         @else
-                                            Belum ada poliklinik yang terdaftar dalam sistem.
+                                            Belum ada jadwal kunjungan yang dibuat.
                                         @endif
                                     </p>
                                     @if(!$search)
-                                    <a href="{{ route('poliklinik.create') }}" 
+                                    <a href="{{ route('jam-kunjungan.create') }}" 
                                        class="inline-flex items-center px-4 py-2 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition">
                                         <i class="fas fa-plus mr-2"></i>
-                                        Tambah Poliklinik
+                                        Tambah Jadwal
                                     </a>
                                     @endif
                                 </div>
@@ -240,42 +256,42 @@
             </div>
             
             <!-- Pagination -->
-            @if($polikliniks->hasPages())
+            @if($jamKunjungan->hasPages())
             <div class="px-6 py-4 border-t border-gray-200 bg-gray-50">
                 <div class="flex flex-col sm:flex-row items-center justify-between gap-4">
                     <!-- Showing entries info -->
                     <div class="text-sm text-gray-700">
                         Menampilkan 
-                        <span class="font-medium">{{ $polikliniks->firstItem() }}</span>
+                        <span class="font-medium">{{ $jamKunjungan->firstItem() }}</span>
                         sampai 
-                        <span class="font-medium">{{ $polikliniks->lastItem() }}</span>
+                        <span class="font-medium">{{ $jamKunjungan->lastItem() }}</span>
                         dari 
-                        <span class="font-medium">{{ $polikliniks->total() }}</span>
-                        data poliklinik
+                        <span class="font-medium">{{ $jamKunjungan->total() }}</span>
+                        jadwal
                     </div>
                     
                     <!-- Pagination Links -->
                     <div class="flex items-center space-x-1">
                         <!-- Previous Page Link -->
-                        @if($polikliniks->onFirstPage())
+                        @if($jamKunjungan->onFirstPage())
                         <span class="px-3 py-1.5 text-gray-400 bg-white border border-gray-300 rounded-lg cursor-not-allowed">
                             <i class="fas fa-chevron-left"></i>
                         </span>
                         @else
-                        <a href="{{ $polikliniks->previousPageUrl() }}{{ $search ? '&search=' . $search : '' }}{{ request('per_page') ? '&per_page=' . request('per_page') : '' }}" 
+                        <a href="{{ $jamKunjungan->previousPageUrl() }}{{ $search ? '&search=' . $search : '' }}{{ request('per_page') ? '&per_page=' . request('per_page') : '' }}" 
                            class="px-3 py-1.5 text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition">
                             <i class="fas fa-chevron-left"></i>
                         </a>
                         @endif
                         
                         <!-- Page Numbers -->
-                        @foreach(range(1, $polikliniks->lastPage()) as $page)
-                            @if($page == $polikliniks->currentPage())
+                        @foreach(range(1, $jamKunjungan->lastPage()) as $page)
+                            @if($page == $jamKunjungan->currentPage())
                             <span class="px-3 py-1.5 text-white bg-blue-600 border border-blue-600 rounded-lg font-medium">
                                 {{ $page }}
                             </span>
-                            @elseif($page >= $polikliniks->currentPage() - 2 && $page <= $polikliniks->currentPage() + 2)
-                            <a href="{{ $polikliniks->url($page) }}{{ $search ? '&search=' . $search : '' }}{{ request('per_page') ? '&per_page=' . request('per_page') : '' }}" 
+                            @elseif($page >= $jamKunjungan->currentPage() - 2 && $page <= $jamKunjungan->currentPage() + 2)
+                            <a href="{{ $jamKunjungan->url($page) }}{{ $search ? '&search=' . $search : '' }}{{ request('per_page') ? '&per_page=' . request('per_page') : '' }}" 
                                class="px-3 py-1.5 text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition">
                                 {{ $page }}
                             </a>
@@ -283,8 +299,8 @@
                         @endforeach
                         
                         <!-- Next Page Link -->
-                        @if($polikliniks->hasMorePages())
-                        <a href="{{ $polikliniks->nextPageUrl() }}{{ $search ? '&search=' . $search : '' }}{{ request('per_page') ? '&per_page=' . request('per_page') : '' }}" 
+                        @if($jamKunjungan->hasMorePages())
+                        <a href="{{ $jamKunjungan->nextPageUrl() }}{{ $search ? '&search=' . $search : '' }}{{ request('per_page') ? '&per_page=' . request('per_page') : '' }}" 
                            class="px-3 py-1.5 text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition">
                             <i class="fas fa-chevron-right"></i>
                         </a>
@@ -300,9 +316,9 @@
         </div>
 
         <!-- Hidden Delete Forms -->
-        @foreach($polikliniks as $poliklinik)
-        <form id="delete-form-{{ $poliklinik->id }}" 
-              action="{{ route('poliklinik.destroy', $poliklinik->id) }}" 
+        @foreach($jamKunjungan as $jadwal)
+        <form id="delete-form-{{ $jadwal->id }}" 
+              action="{{ route('jadwal.destroy', $jadwal->id) }}" 
               method="POST" 
               class="hidden">
             @csrf
@@ -364,31 +380,39 @@
             window.location.href = url.toString();
         }
 
+        function confirmDelete(id, jam) {
+            Swal.fire({
+                title: 'Konfirmasi Hapus',
+                html: `<div class="text-left">
+                    <p class="mb-2">Apakah Anda yakin ingin menghapus jadwal ini?</p>
+                    <div class="bg-gray-50 p-3 rounded-lg mb-4">
+                        <p class="text-sm font-medium text-gray-700">Jadwal: <span class="text-blue-600">${jam}</span></p>
+                    </div>
+                    <p class="text-sm text-gray-600">Tindakan ini tidak dapat dibatalkan.</p>
+                </div>`,
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Ya, Hapus!',
+                cancelButtonText: 'Batal',
+                reverseButtons: true,
+                customClass: {
+                    confirmButton: 'mr-2',
+                    cancelButton: 'ml-2'
+                }
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    const form = document.getElementById(`delete-form-${id}`);
+                    if (form) {
+                        form.submit();
+                    }
+                }
+            });
+        }
+
         document.addEventListener('DOMContentLoaded', function() {
-            window.confirmDelete = function(poliklinikId) {
-                Swal.fire({
-                    title: 'Konfirmasi Hapus',
-                    text: 'Apakah Anda yakin ingin menghapus data poliklinik ini?',
-                    icon: 'warning',
-                    showCancelButton: true,
-                    confirmButtonColor: '#3085d6',
-                    cancelButtonColor: '#d33',
-                    confirmButtonText: 'Ya, Hapus!',
-                    cancelButtonText: 'Batal',
-                    reverseButtons: true,
-                    customClass: {
-                        confirmButton: 'mr-2',
-                        cancelButton: 'ml-2'
-                    }
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        const form = document.getElementById(`delete-form-${poliklinikId}`);
-                        if (form) {
-                            form.submit();
-                        }
-                    }
-                });
-            };
+            window.confirmDelete = confirmDelete;
 
             const searchInput = document.getElementById('searchInput');
             const perPageInput = document.getElementById('perPage');

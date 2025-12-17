@@ -272,22 +272,24 @@
                                     </button>
                                     @endif
                                     
-                                    <!-- Untuk kunjungan yang sudah di-approve -->
                                     @if($visit->aksi == 'approved')
-                                    <!-- View Report Button -->
-                                    <a href="" 
-                                       class="w-full inline-flex items-center justify-center px-3 py-1.5 bg-purple-600 text-white text-sm font-medium rounded hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-1 transition mb-2">
-                                        <i class="fas fa-file-medical mr-1.5 text-xs"></i>
-                                        View Report
-                                    </a>
-                                    
-                                    <!-- Cancel Approval Button -->
-                                    <button type="button" 
-                                            onclick="confirmCancelApproval({{ $visit->id }})"
-                                            class="w-full inline-flex items-center justify-center px-3 py-1.5 bg-yellow-600 text-white text-sm font-medium rounded hover:bg-yellow-700 focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:ring-offset-1 transition">
-                                        <i class="fas fa-undo mr-1.5 text-xs"></i>
-                                        Batalkan Approval
-                                    </button>
+                                        <div class="space-y-2 min-w-[140px]">
+                                            <!-- Tombol View Report -->
+                                            <button type="button" 
+                                                    onclick="checkReportStatus({{ $visit->id }})"
+                                                    class="w-full inline-flex items-center justify-center px-3 py-1.5 bg-purple-600 text-white text-sm font-medium rounded hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-1 transition">
+                                                <i class="fas fa-file-medical mr-1.5 text-xs"></i>
+                                                View Report
+                                            </button>
+                                            
+                                            <!-- Tombol Batalkan Approval -->
+                                            <button type="button" 
+                                                    onclick="confirmCancelApproval({{ $visit->id }})"
+                                                    class="w-full inline-flex items-center justify-center px-3 py-1.5 bg-yellow-600 text-white text-sm font-medium rounded hover:bg-yellow-700 focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:ring-offset-1 transition">
+                                                <i class="fas fa-undo mr-1.5 text-xs"></i>
+                                                Batalkan Approval
+                                            </button>
+                                        </div>
                                     @endif
                                 </div>
                             </td>
@@ -584,6 +586,89 @@
                     }
                 });
             };
+
+            window.checkReportStatus = function(visitId) {
+                Swal.fire({
+                    title: 'Memeriksa Status Laporan',
+                    html: 'Mohon tunggu...',
+                    allowOutsideClick: false,
+                    didOpen: () => {
+                        Swal.showLoading();
+                    }
+                });
+
+                fetch(`/check-report-status/${visitId}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        Swal.close();
+                        
+                        if (data.hasReport) {
+                            window.location.href = `/admin/showLaporan/${visitId}`;
+                        } else {
+                            showNoReportPopup(visitId, data);
+                        }
+                    })
+                    .catch(error => {
+                        Swal.close();
+                        Swal.fire({
+                            title: 'Error',
+                            text: 'Terjadi kesalahan saat memeriksa status laporan.',
+                            icon: 'error',
+                            confirmButtonText: 'OK'
+                        });
+                    });
+            };
+
+            // Function untuk menampilkan popup jika laporan belum dibuat
+            function showNoReportPopup(visitId, data) {
+                Swal.fire({
+                    title: 'Laporan Belum Tersedia',
+                    html: `
+                        <div class="text-left">
+                            <p class="mb-3">Laporan medis untuk kunjungan ini belum dibuat.</p>
+                            
+                            <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mb-4">
+                                <div class="flex items-start">
+                                    <div class="flex-shrink-0">
+                                        <i class="fas fa-exclamation-triangle text-yellow-400 mt-0.5"></i>
+                                    </div>
+                                    <div class="ml-3">
+                                        <h3 class="text-sm font-medium text-yellow-800 mb-2">Informasi Kunjungan:</h3>
+                                        <div class="text-sm text-yellow-700 space-y-1">
+                                            <p><span class="font-medium">Pasien:</span> ${data.patientName}</p>
+                                            <p><span class="font-medium">Dokter:</span> ${data.doctorName}</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <p class="text-gray-600 text-sm">
+                                Dokter belum membuat laporan medis untuk kunjungan ini. 
+                                Silakan hubungi dokter yang bersangkutan.
+                            </p>
+                        </div>
+                    `,
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#6c757d',
+                    confirmButtonText: 'Hubungi Dokter',
+                    cancelButtonText: 'Tutup',
+                    reverseButtons: true,
+                    customClass: {
+                        confirmButton: 'mr-2',
+                        cancelButton: 'ml-2'
+                    }
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        window.location.href = `/doctors/${data.doctorId}/contact`;
+                    }
+                });
+            }
+
+            function viewReport(visitId) {
+                window.location.href = `/admin/showLaporan/${visitId}`;
+            }
 
             const searchInput = document.getElementById('searchInput');
             const perPageInput = document.getElementById('perPage');

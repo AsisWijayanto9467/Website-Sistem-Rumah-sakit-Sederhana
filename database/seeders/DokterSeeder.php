@@ -2,7 +2,7 @@
 
 namespace Database\Seeders;
 
-use App\Models\Doctors;
+use App\Models\Doctor;
 use App\Models\User;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
@@ -16,6 +16,15 @@ class DokterSeeder extends Seeder
     public function run(): void
     {
         $dokters = [
+            [
+                'nama' => 'Dr. Gunawan',
+                'email' => 'dokter@example.com',
+                'poliklinik_id' => 1,
+                'tarif_konsultasi' => 50000,
+                'lama_pengalaman' => 8,
+                'pendidikan' => 'S.Ked, Sp.PD',
+                'nomor_telpon' => '089987654432',
+            ],
             [
                 'nama' => 'Dr. Andi Saputra',
                 'email' => 'andi@clinic.com',
@@ -53,7 +62,7 @@ class DokterSeeder extends Seeder
                 'role' => 'doctor',
             ]);
 
-            Doctors::create([
+            Doctor::create([
                 'user_id' => $user->id,
                 'nama' => $data['nama'],
                 'poliklinik_id' => $data['poliklinik_id'],

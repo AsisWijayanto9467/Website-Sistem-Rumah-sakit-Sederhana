@@ -1,24 +1,25 @@
 @extends('layout.app')
 
-@section('title','Data Poliklinik')
-@section('page-title','Tabel Poliklinik')
+@section('title','Data Pasien Dokter')
+@section('page-title','Pasien Terkait')
 
 @section('content')
     <div class="container mx-auto px-4 py-6">
+        <!-- Page Header -->
         <div class="mb-6">
             <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
                 <div>
-                    <h1 class="text-2xl font-bold text-gray-900">Data Poliklinik</h1>
-                    <p class="text-gray-600 mt-1">Kelola data poliklinik yang tersedia di sistem</p>
+                    <h1 class="text-2xl font-bold text-gray-900">Pasien Saya</h1>
+                    <p class="text-gray-600 mt-1">Daftar pasien yang berkunjung ke dokter {{ auth()->user()->doctor->nama ?? auth()->user()->nama }}</p>
                 </div>
-                <a href="{{ route('poliklinik.create') }}" 
-                   class="inline-flex items-center px-4 py-2.5 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition">
-                    <i class="fas fa-plus mr-2"></i>
-                    Tambah Poliklinik
-                </a>
+                <div class="flex items-center space-x-2">
+                    <span class="text-sm text-gray-700">Dokter:</span>
+                    <span class="font-medium text-gray-900">{{ auth()->user()->doctor->nama ?? auth()->user()->nama }}</span>
+                </div>
             </div>
         </div>
 
+        <!-- Success Notification -->
         @if(session('success'))
         <div class="mb-6 p-4 bg-green-50 border border-green-200 rounded-lg">
             <div class="flex items-center">
@@ -48,8 +49,10 @@
         <div class="bg-white rounded-xl border border-gray-200 shadow-sm mb-6">
             <div class="p-6">
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <!-- Entries Per Page & Search Bar Side by Side -->
                     <div class="md:col-span-3">
                         <div class="flex flex-col sm:flex-row items-start sm:items-center gap-6">
+                            <!-- Search Bar dengan Button -->
                             <div class="flex-1">
                                 <div class="flex gap-2">
                                     <div class="relative flex-1">
@@ -59,11 +62,11 @@
                                         <input type="text" 
                                             id="searchInput" 
                                             name="search"
-                                            value="{{ $search }}"
-                                            placeholder="Cari berdasarkan nama, deskripsi, atau status..." 
+                                            value="{{ request('search') }}"
+                                            placeholder="Cari berdasarkan nama, email, nomor telepon, atau kota..." 
                                             class="w-full pl-10 pr-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition text-sm"
                                             onkeypress="handleSearchKeyPress(event)">
-                                        @if($search)
+                                        @if(request('search'))
                                         <div class="absolute inset-y-0 right-0 flex items-center pr-3">
                                             <button type="button" 
                                                     onclick="clearSearch()"
@@ -81,6 +84,8 @@
                                     </button>
                                 </div>
                             </div>
+
+                            <!-- Entries Per Page -->
                             <div class="flex items-center gap-2">
                                 <label for="perPage" class="text-sm font-medium text-gray-700 whitespace-nowrap">
                                     Tampilkan:
@@ -100,26 +105,28 @@
                         </div>
                     </div>
                 </div>
+                
             </div>
         </div>
 
-        <!-- Poliklinik Table Card -->
+        <!-- Patients Table Card -->
         <div class="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
+            <!-- Table -->
             <div class="overflow-x-auto">
                 <table class="min-w-full divide-y divide-gray-200">
                     <thead class="bg-gray-50">
                         <tr>
                             <th scope="col" class="px-6 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
-                                Nama Poliklinik
+                                Nama Pasien
                             </th>
                             <th scope="col" class="px-6 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
-                                Deskripsi
+                                Rincian Pendaftaran
                             </th>
                             <th scope="col" class="px-6 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
-                                Status
+                                Kontak & Identitas
                             </th>
                             <th scope="col" class="px-6 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
-                                Tanggal Dibuat
+                                Data Kesehatan
                             </th>
                             <th scope="col" class="px-6 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
                                 Aksi
@@ -127,80 +134,128 @@
                         </tr>
                     </thead>
                     <tbody class="bg-gray-50 divide-y divide-gray-100">
-                        @forelse($polikliniks as $poliklinik)
+                        @forelse($patients as $pasien)
                         <tr class="hover:bg-gray-100 transition-colors">
-                            <!-- Column 1: Nama Poliklinik -->
+                            <!-- Column 1: Nama Pasien -->
                             <td class="px-6 py-4">
                                 <div class="space-y-1">
-                                    <div class="text-sm font-semibold text-gray-900">
-                                        {{ $poliklinik->nama_poli }}
+                                    <div class="flex items-center">
+                                        <div class="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 mr-2">
+                                            <i class="fas fa-user-injured text-sm"></i>
+                                        </div>
+                                        <div class="text-sm font-semibold text-gray-900">
+                                            {{ $pasien->nama }}
+                                        </div>
+                                    </div>
+                                    <div class="flex items-start">
+                                        <span class="text-xs font-medium text-gray-700 mr-2">Email:</span>
+                                        <span class="text-sm text-gray-800">{{ $pasien->user->email ?? '-' }}</span>
                                     </div>
                                 </div>
                             </td>
 
-                            <!-- Column 2: Deskripsi -->
+                            <!-- Column 2: Rincian Pendaftaran -->
                             <td class="px-6 py-4">
-                                <div class="space-y-1">
-                                    @if($poliklinik->deskripsi)
-                                    <div class="text-sm text-gray-800 max-w-md">
-                                        {{ Str::limit($poliklinik->deskripsi, 150) }}
+                                <div class="space-y-2">
+                                    <div class="flex items-start">
+                                        <span class="text-xs font-medium text-gray-700 mr-2">Tanggal:</span>
+                                        <span class="text-sm text-gray-800">
+                                            {{ $pasien->tanggal_registrasi ? \Carbon\Carbon::parse($pasien->tanggal_registrasi)->format('d/m/Y') : '-' }}
+                                        </span>
                                     </div>
-                                    @else
-                                    <span class="text-sm text-gray-500 italic">Tidak ada deskripsi</span>
+                                    <div class="flex items-start">
+                                        <span class="text-xs font-medium text-gray-700 mr-2">Waktu:</span>
+                                        <span class="text-sm text-gray-800">
+                                            @if($pasien->waktu_daftar)
+                                                {{ \Carbon\Carbon::parse($pasien->waktu_daftar)->format('H:i') }}
+                                            @else
+                                                -
+                                            @endif
+                                        </span>
+                                    </div>
+                                </div>
+                            </td>
+
+                            <!-- Column 3: Kontak & Identitas -->
+                            <td class="px-6 py-4">
+                                <div class="space-y-2">
+                                    @if($pasien->nomor_telpon)
+                                    <div class="flex items-start">
+                                        <span class="text-xs font-medium text-gray-700 mr-2">Telepon:</span>
+                                        <span class="text-sm text-gray-800">{{ $pasien->nomor_telpon }}</span>
+                                    </div>
+                                    @endif
+                                    
+                                    @if($pasien->alamat)
+                                    <div class="flex items-start">
+                                        <span class="text-xs font-medium text-gray-700 mr-2">Alamat:</span>
+                                        <span class="text-sm text-gray-800">{{ Str::limit($pasien->alamat, 30) }}</span>
+                                    </div>
+                                    @endif
+                                    
+                                    @if($pasien->kota)
+                                    <div class="flex items-start">
+                                        <span class="text-xs font-medium text-gray-700 mr-2">Kota:</span>
+                                        <span class="text-sm text-gray-800">{{ $pasien->kota }}</span>
+                                    </div>
+                                    @endif
+                                    
+                                    @if($pasien->nomor_identitas)
+                                    <div class="flex items-start">
+                                        <span class="text-xs font-medium text-gray-700 mr-2">ID:</span>
+                                        <span class="text-sm text-gray-800">{{ $pasien->nomor_identitas }}</span>
+                                    </div>
                                     @endif
                                 </div>
                             </td>
 
-                            <!-- Column 3: Status -->
+                            <!-- Column 4: Data Kesehatan -->
                             <td class="px-6 py-4">
-                                <div class="space-y-1">
-                                    @if($poliklinik->status == 'aktif')
-                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                                        <i class="fas fa-check-circle mr-1"></i>
-                                        Aktif
-                                    </span>
-                                    @else
-                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
-                                        <i class="fas fa-times-circle mr-1"></i>
-                                        Tidak Aktif
-                                    </span>
+                                <div class="space-y-2">
+                                    @if($pasien->gender)
+                                    <div class="flex items-start">
+                                        <span class="text-xs font-medium text-gray-700 mr-2">Jenis Kelamin:</span>
+                                        <span class="text-sm text-gray-800">
+                                            @if($pasien->gender == 'laki-laki')
+                                                <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-blue-100 text-blue-800">
+                                                    <i class="fas fa-mars mr-1"></i>
+                                                    Laki-laki
+                                                </span>
+                                            @elseif($pasien->gender == 'perempuan')
+                                                <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-pink-100 text-pink-800">
+                                                    <i class="fas fa-venus mr-1"></i>
+                                                    Perempuan
+                                                </span>
+                                            @else
+                                                {{ ucfirst($pasien->gender) }}
+                                            @endif
+                                        </span>
+                                    </div>
                                     @endif
-                                </div>
-                            </td>
-
-                            <!-- Column 4: Tanggal Dibuat -->
-                            <td class="px-6 py-4">
-                                <div class="space-y-1">
-                                    <div class="text-sm text-gray-800">
-                                        {{ \Carbon\Carbon::parse($poliklinik->created_at)->format('d/m/Y') }}
+                                    
+                                    @if($pasien->tipe_darah)
+                                    <div class="flex items-start">
+                                        <span class="text-xs font-medium text-gray-700 mr-2">Gol. Darah:</span>
+                                        <span class="text-sm text-gray-800">{{ $pasien->tipe_darah }}</span>
                                     </div>
-                                    <div class="text-xs text-gray-500">
-                                        {{ \Carbon\Carbon::parse($poliklinik->created_at)->format('H:i') }}
+                                    @endif
+                                    
+                                    @if($pasien->tanggal_lahir)
+                                    <div class="flex items-start">
+                                        <span class="text-xs font-medium text-gray-700 mr-2">Tgl. Lahir:</span>
+                                        <span class="text-sm text-gray-800">{{ \Carbon\Carbon::parse($pasien->tanggal_lahir)->format('d/m/Y') }}</span>
                                     </div>
+                                    @endif
                                 </div>
                             </td>
 
                             <!-- Column 5: Aksi -->
                             <td class="px-6 py-4">
                                 <div class="space-y-2 min-w-[120px]">
-                                    <!-- Edit and Delete Buttons Side by Side -->
-                                    <div class="flex space-x-2">
-                                        <!-- Edit Button -->
-                                        <a href="{{ route('poliklinik.edit', $poliklinik->id) }}" 
-                                           class="inline-flex items-center justify-center px-3 py-1.5 bg-blue-600 text-white text-sm font-medium rounded hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1 transition flex-1">
-                                            <i class="fas fa-edit mr-1.5 text-xs"></i>
-                                            Edit
-                                        </a>
-                                        
-                                        <!-- Delete Button -->
-                                        <button type="button" 
-                                                onclick="confirmDelete({{ $poliklinik->id }})"
-                                                class="inline-flex items-center justify-center px-3 py-1.5 bg-red-600 text-white text-sm font-medium rounded hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-1 transition flex-1">
-                                            <i class="fas fa-trash mr-1.5 text-xs"></i>
-                                            Hapus
-                                        </button>
+                                    <div class="flex items-start">
+                                        <span class="text-xs font-medium text-gray-700 mr-2">Status:</span>
+                                        <span class="text-sm text-gray-800">Aktif</span>
                                     </div>
-                                    
                                 </div>
                             </td>
                         </tr>
@@ -208,29 +263,22 @@
                         <tr>
                             <td colspan="5" class="px-6 py-12 text-center">
                                 <div class="flex flex-col items-center justify-center">
-                                    <i class="fas fa-clinic-medical text-4xl text-gray-300 mb-4"></i>
+                                    <i class="fas fa-user-injured text-4xl text-gray-300 mb-4"></i>
                                     <h3 class="text-lg font-medium text-gray-900 mb-2">
-                                        @if($search)
-                                            Hasil pencarian "{{ $search }}" tidak ditemukan
+                                        @if(request('search'))
+                                            Hasil pencarian "{{ request('search') }}" tidak ditemukan
                                         @else
-                                            Tidak ada data poliklinik
+                                            Belum ada pasien yang berkunjung
                                         @endif
                                     </h3>
                                     <p class="text-gray-600 mb-6">
-                                        @if($search)
+                                        @if(request('search'))
                                             Coba dengan kata kunci lain atau 
-                                            <a href="{{ route('poliklinik.index') }}" class="text-blue-600 hover:underline">reset pencarian</a>
+                                            <a href="{{ route('dokter.pasien.index') }}" class="text-blue-600 hover:underline">reset pencarian</a>
                                         @else
-                                            Belum ada poliklinik yang terdaftar dalam sistem.
+                                            Pasien akan muncul di sini setelah melakukan kunjungan ke dokter Anda.
                                         @endif
                                     </p>
-                                    @if(!$search)
-                                    <a href="{{ route('poliklinik.create') }}" 
-                                       class="inline-flex items-center px-4 py-2 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition">
-                                        <i class="fas fa-plus mr-2"></i>
-                                        Tambah Poliklinik
-                                    </a>
-                                    @endif
                                 </div>
                             </td>
                         </tr>
@@ -240,42 +288,42 @@
             </div>
             
             <!-- Pagination -->
-            @if($polikliniks->hasPages())
+            @if($patients->hasPages())
             <div class="px-6 py-4 border-t border-gray-200 bg-gray-50">
                 <div class="flex flex-col sm:flex-row items-center justify-between gap-4">
                     <!-- Showing entries info -->
                     <div class="text-sm text-gray-700">
                         Menampilkan 
-                        <span class="font-medium">{{ $polikliniks->firstItem() }}</span>
+                        <span class="font-medium">{{ $patients->firstItem() }}</span>
                         sampai 
-                        <span class="font-medium">{{ $polikliniks->lastItem() }}</span>
+                        <span class="font-medium">{{ $patients->lastItem() }}</span>
                         dari 
-                        <span class="font-medium">{{ $polikliniks->total() }}</span>
-                        data poliklinik
+                        <span class="font-medium">{{ $patients->total() }}</span>
+                        pasien
                     </div>
                     
                     <!-- Pagination Links -->
                     <div class="flex items-center space-x-1">
                         <!-- Previous Page Link -->
-                        @if($polikliniks->onFirstPage())
+                        @if($patients->onFirstPage())
                         <span class="px-3 py-1.5 text-gray-400 bg-white border border-gray-300 rounded-lg cursor-not-allowed">
                             <i class="fas fa-chevron-left"></i>
                         </span>
                         @else
-                        <a href="{{ $polikliniks->previousPageUrl() }}{{ $search ? '&search=' . $search : '' }}{{ request('per_page') ? '&per_page=' . request('per_page') : '' }}" 
+                        <a href="{{ $patients->previousPageUrl() }}{{ request('search') ? '&search=' . request('search') : '' }}{{ request('per_page') ? '&per_page=' . request('per_page') : '' }}" 
                            class="px-3 py-1.5 text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition">
                             <i class="fas fa-chevron-left"></i>
                         </a>
                         @endif
                         
                         <!-- Page Numbers -->
-                        @foreach(range(1, $polikliniks->lastPage()) as $page)
-                            @if($page == $polikliniks->currentPage())
+                        @foreach(range(1, $patients->lastPage()) as $page)
+                            @if($page == $patients->currentPage())
                             <span class="px-3 py-1.5 text-white bg-blue-600 border border-blue-600 rounded-lg font-medium">
                                 {{ $page }}
                             </span>
-                            @elseif($page >= $polikliniks->currentPage() - 2 && $page <= $polikliniks->currentPage() + 2)
-                            <a href="{{ $polikliniks->url($page) }}{{ $search ? '&search=' . $search : '' }}{{ request('per_page') ? '&per_page=' . request('per_page') : '' }}" 
+                            @elseif($page >= $patients->currentPage() - 2 && $page <= $patients->currentPage() + 2)
+                            <a href="{{ $patients->url($page) }}{{ request('search') ? '&search=' . request('search') : '' }}{{ request('per_page') ? '&per_page=' . request('per_page') : '' }}" 
                                class="px-3 py-1.5 text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition">
                                 {{ $page }}
                             </a>
@@ -283,8 +331,8 @@
                         @endforeach
                         
                         <!-- Next Page Link -->
-                        @if($polikliniks->hasMorePages())
-                        <a href="{{ $polikliniks->nextPageUrl() }}{{ $search ? '&search=' . $search : '' }}{{ request('per_page') ? '&per_page=' . request('per_page') : '' }}" 
+                        @if($patients->hasMorePages())
+                        <a href="{{ $patients->nextPageUrl() }}{{ request('search') ? '&search=' . request('search') : '' }}{{ request('per_page') ? '&per_page=' . request('per_page') : '' }}" 
                            class="px-3 py-1.5 text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition">
                             <i class="fas fa-chevron-right"></i>
                         </a>
@@ -298,17 +346,6 @@
             </div>
             @endif
         </div>
-
-        <!-- Hidden Delete Forms -->
-        @foreach($polikliniks as $poliklinik)
-        <form id="delete-form-{{ $poliklinik->id }}" 
-              action="{{ route('poliklinik.destroy', $poliklinik->id) }}" 
-              method="POST" 
-              class="hidden">
-            @csrf
-            @method('DELETE')
-        </form>
-        @endforeach
     </div>
 @endsection
 
@@ -364,32 +401,34 @@
             window.location.href = url.toString();
         }
 
-        document.addEventListener('DOMContentLoaded', function() {
-            window.confirmDelete = function(poliklinikId) {
-                Swal.fire({
-                    title: 'Konfirmasi Hapus',
-                    text: 'Apakah Anda yakin ingin menghapus data poliklinik ini?',
-                    icon: 'warning',
-                    showCancelButton: true,
-                    confirmButtonColor: '#3085d6',
-                    cancelButtonColor: '#d33',
-                    confirmButtonText: 'Ya, Hapus!',
-                    cancelButtonText: 'Batal',
-                    reverseButtons: true,
-                    customClass: {
-                        confirmButton: 'mr-2',
-                        cancelButton: 'ml-2'
-                    }
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        const form = document.getElementById(`delete-form-${poliklinikId}`);
-                        if (form) {
-                            form.submit();
-                        }
-                    }
-                });
-            };
+        function showPatientDetail(patientId) {
+            Swal.fire({
+                title: 'Detail Pasien',
+                text: 'Fitur detail pasien akan segera tersedia',
+                icon: 'info',
+                confirmButtonText: 'OK'
+            });
+        }
 
+        function showMedicalHistory(patientId) {
+            Swal.fire({
+                title: 'Riwayat Medis',
+                text: 'Fitur riwayat medis akan segera tersedia',
+                icon: 'info',
+                confirmButtonText: 'OK'
+            });
+        }
+
+        function scheduleAppointment(patientId) {
+            Swal.fire({
+                title: 'Buat Janji',
+                text: 'Fitur buat janji akan segera tersedia',
+                icon: 'info',
+                confirmButtonText: 'OK'
+            });
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
             const searchInput = document.getElementById('searchInput');
             const perPageInput = document.getElementById('perPage');
             

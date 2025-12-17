@@ -29,14 +29,14 @@ class Visits extends Model
         return $this->belongsTo(Patients::class);
     }
     public function doctor() {
-        return $this->belongsTo(Doctors::class);
+        return $this->belongsTo(Doctor::class);
     }
     public function poliklinik() {
         return $this->belongsTo(Poliklinik::class);
     }
 
     public function details() {
-        return $this->hasMany(Visit_Details::class);
+        return $this->hasOne(VisitDetails::class, 'visit_id', 'id');
     }
 
     public function raport() {

@@ -4,6 +4,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\BerandaController;
 use App\Http\Controllers\DetailKunjunganController;
 use App\Http\Controllers\DokterController;
+use App\Http\Controllers\JadwalController;
 use App\Http\Controllers\KunjunganController;
 use App\Http\Controllers\MedicationController;
 use App\Http\Controllers\PasienController;
@@ -51,7 +52,7 @@ Route::middleware(['auth'])->group(function () {
     Route::put('/admin/Medicine/{id}',[MedicationController::class, 'update'])->name('medication.update');
     Route::delete('/admin/Medicine/{id}',[MedicationController::class, 'destroy'])->name('medication.destroy');
 
-    // Halaman pasien
+    // Halaman dokter
     Route::get('/admin/dokter',[DokterController::class, 'index'])->name('dokter.index');
     Route::get('/admin/dokter/create',[DokterController::class, 'create'])->name('dokter.create');
     Route::post('/admin/dokter',[DokterController::class, 'store'])->name('dokter.store');
@@ -59,6 +60,9 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/admin/dokter/{id}',[DokterController::class, 'edit'])->name('dokter.edit');
     Route::put('/admin/dokter/{id}',[DokterController::class, 'update'])->name('dokter.update');
     Route::delete('/admin/dokter/{id}',[DokterController::class, 'destroy'])->name('dokter.destroy');
+
+    // tampilkan pasien berdasarkan id dokter
+    Route::get('/dokter/showPasien', [DokterController::class, 'showPasien'])->name('dokter.showPasien');
 
     // Halaman pasien
     Route::get('/admin/services',[ServiceController::class, 'index'])->name('services.index');
@@ -89,4 +93,25 @@ Route::middleware(['auth'])->group(function () {
     Route::put('/admin/detail/kunjungan/{id}',[DetailKunjunganController::class, 'update'])->name('detailKunjungan.update');
     Route::put('/admin/detail/kunjungan/{id}',[DetailKunjunganController::class, 'edit'])->name('detailKunjungan.edit');
     Route::delete('/admin/detail/kunjungan/{id}',[DetailKunjunganController::class, 'destroy'])->name('detailKunjungan.destroy');
+
+    // Halaman Jadwal Dokter
+    Route::get('/dokter/jadwals',[JadwalController::class, 'index'])->name('jadwals.index');
+    Route::get('/dokter/jadwals/create',[JadwalController::class, 'create'])->name('jadwals.create');
+    Route::post('/dokter/jadwals',[JadwalController::class, 'store'])->name('jadwals.store');
+    Route::get('/dokter/jadwal/{id}',[JadwalController::class, 'edit'])->name('jadwal.edit');
+    Route::put('/dokter/jadwal/{id}',[JadwalController::class, 'update'])->name('jadwal.update');
+    Route::delete('/dokter/jadwal/{id}',[JadwalController::class, 'destroy'])->name('jadwal.destroy');
+
+    // Halaman Kunjungan Untuk Dokter
+    Route::get('/dokter/kunjungan', [KunjunganController::class, 'kunjunganDokter'])->name('dokter.kunjungan');
+    Route::get('/dokter/buatLaporan/{visitId}', [KunjunganController::class, 'buatLaporan'])->name('dokter.buatLaporan');
+    Route::post('/dokter/storeLaporan/{visitId}', [KunjunganController::class, 'storeLaporan'])->name('dokter.storeLaporan');
+    Route::get('/dokter/editLaporan/{visitId}', [KunjunganController::class, 'editLaporan'])->name('dokter.editLaporan');
+    Route::put('/dokter/updateLaporan/{visitId}', [KunjunganController::class, 'updateLaporan'])->name('dokter.updateLaporan');
+    Route::get('/dokter/showLaporan/{visitId}', [KunjunganController::class, 'viewLaporan'])->name('dokter.showLaporan');
+    Route::get('/dokter/downloadLaporan/{visitId}', [KunjunganController::class, 'downloadLaporan'])->name('dokter.downloadLaporan');
+
+    Route::get('/check-report-status/{visitId}', [KunjunganController::class, 'checkReportStatus'])->name('check.report.status');
+    Route::get('/admin/showLaporan/{visitId}', [KunjunganController::class, 'viewAdminLaporan'])->name('admin.showLaporan');
+    Route::get('/admin/download-laporan/{visitId}', [KunjunganController::class, 'downloadAdminLaporan'])->name('admin.downloadLaporan');
 });

@@ -48,7 +48,6 @@
                     <!-- Entries Per Page & Search Bar Side by Side -->
                     <div class="md:col-span-3">
                         <div class="flex flex-col sm:flex-row items-start sm:items-center gap-6">
-                            <!-- Search Bar dengan Button -->
                             <div class="flex-1">
                                 <div class="flex gap-2">
                                     <div class="relative flex-1">
@@ -123,9 +122,14 @@
                             <th scope="col" class="px-6 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
                                 Status Stok
                             </th>
-                            <th scope="col" class="px-6 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
-                                Aksi
-                            </th>
+                           
+                            @auth
+                                @if (Auth::user()->role === 'admin')
+                                     <th scope="col" class="px-6 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
+                                        Aksi
+                                    </th>
+                                @endif
+                            @endauth
                         </tr>
                     </thead>
                     <tbody class="bg-gray-50 divide-y divide-gray-100">
@@ -190,29 +194,33 @@
                                 </div>
                             </td>
 
-                            <!-- Column 5: Aksi -->
-                            <td class="px-6 py-4">
-                                <div class="space-y-2 min-w-[120px]">
-                                    <!-- Edit and Delete Buttons Side by Side -->
-                                    <div class="flex space-x-2">
-                                        <!-- Edit Button -->
-                                        <a href="{{ route('medication.edit', $obat->id) }}" 
-                                           class="inline-flex items-center justify-center px-3 py-1.5 bg-blue-600 text-white text-sm font-medium rounded hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1 transition flex-1">
-                                            <i class="fas fa-edit mr-1.5 text-xs"></i>
-                                            Edit
-                                        </a>
-                                        
-                                        <!-- Delete Button -->
-                                        <button type="button" 
-                                                onclick="confirmDelete({{ $obat->id }})"
-                                                class="inline-flex items-center justify-center px-3 py-1.5 bg-red-600 text-white text-sm font-medium rounded hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-1 transition flex-1">
-                                            <i class="fas fa-trash mr-1.5 text-xs"></i>
-                                            Hapus
-                                        </button>
-                                    </div>
-                                    
-                                </div>
-                            </td>
+                            @auth
+                                @if (Auth::user()->role === 'admin')
+                                    <!-- Column 5: Aksi -->
+                                    <td class="px-6 py-4">
+                                        <div class="space-y-2 min-w-[120px]">
+                                            <!-- Edit and Delete Buttons Side by Side -->
+                                            <div class="flex space-x-2">
+                                                <!-- Edit Button -->
+                                                <a href="{{ route('medication.edit', $obat->id) }}" 
+                                                class="inline-flex items-center justify-center px-3 py-1.5 bg-blue-600 text-white text-sm font-medium rounded hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1 transition flex-1">
+                                                    <i class="fas fa-edit mr-1.5 text-xs"></i>
+                                                    Edit
+                                                </a>
+                                                
+                                                <!-- Delete Button -->
+                                                <button type="button" 
+                                                        onclick="confirmDelete({{ $obat->id }})"
+                                                        class="inline-flex items-center justify-center px-3 py-1.5 bg-red-600 text-white text-sm font-medium rounded hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-1 transition flex-1">
+                                                    <i class="fas fa-trash mr-1.5 text-xs"></i>
+                                                    Hapus
+                                                </button>
+                                            </div>
+                                            
+                                        </div>
+                                    </td>
+                                @endif
+                            @endauth
                         </tr>
                         @empty
                         <tr>
@@ -234,13 +242,18 @@
                                             Belum ada obat yang terdaftar dalam sistem.
                                         @endif
                                     </p>
-                                    @if(!$search)
-                                    <a href="{{ route('medication.create') }}" 
-                                       class="inline-flex items-center px-4 py-2 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition">
-                                        <i class="fas fa-plus mr-2"></i>
-                                        Tambah Obat Baru
-                                    </a>
-                                    @endif
+                                    
+                                    @auth
+                                        @if (Auth::user()->role === 'admin')
+                                            @if(!$search)
+                                            <a href="{{ route('medication.create') }}" 
+                                            class="inline-flex items-center px-4 py-2 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition">
+                                                <i class="fas fa-plus mr-2"></i>
+                                                Tambah Obat Baru
+                                            </a>
+                                            @endif
+                                        @endif
+                                    @endauth
                                 </div>
                             </td>
                         </tr>
