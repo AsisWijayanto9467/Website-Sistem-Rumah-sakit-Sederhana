@@ -1,7 +1,8 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\API;
 
+use App\Http\Controllers\Controller;
 use App\Models\Services;
 use Illuminate\Http\Request;
 
@@ -35,7 +36,10 @@ class ServiceController extends Controller
             $services->appends(['per_page' => $perPage]);
         }
 
-        return view('layanan.service.index', compact('services', 'search'));
+        return response()->json([
+            "services" => $services,
+            "search" => $search
+        ], 200);
     }
 
     /**
@@ -43,7 +47,7 @@ class ServiceController extends Controller
      */
     public function create()
     {
-        return view('layanan.service.create');
+        //
     }
 
     /**
@@ -51,16 +55,20 @@ class ServiceController extends Controller
      */
     public function store(Request $request)
     {
-        $request->validate([
+        $validated = $request->validate([
             'jenis_layanan' => 'required|string|max:255',
             'harga' => 'required|numeric|min:0',
             'status' => 'required|in:aktif,tidak aktif',
-            'catatan' => 'nullable|string'
+            'catatan' => 'nullable|string',
         ]);
 
-        Services::create($request->all());
+        $service = Services::create($validated);
 
-        return redirect()->route('services.index')->with('success', 'Layanan berhasil ditambahkan.');
+        return response()->json([
+            'success' => true,
+            'message' => 'Layanan berhasil ditambahkan.',
+            'data' => $service
+        ], 201);
     }
 
     /**
@@ -68,7 +76,12 @@ class ServiceController extends Controller
      */
     public function show(string $id)
     {
-        //
+        $service = Services::findOrFail($id);
+
+        return response()->json([
+            'success' => true,
+            'data' => $service
+        ]);
     }
 
     /**
@@ -77,9 +90,12 @@ class ServiceController extends Controller
     public function edit(string $id)
     {
         $service = Services::findOrFail($id);
-        return view('layanan.service.edit', compact('service'));
-    }
 
+        return response()->json([
+            'success' => true,
+            'data' => $service
+        ]);
+    }
     /**
      * Update the specified resource in storage.
      */
@@ -87,15 +103,20 @@ class ServiceController extends Controller
     {
         $service = Services::findOrFail($id);
 
-        $request->validate([
+        $validated = $request->validate([
             'jenis_layanan' => 'required|string|max:255',
-            'status' => 'required|in:aktif,tidak aktif',
             'harga' => 'required|numeric|min:0',
-            'catatan' => 'nullable|string'
+            'status' => 'required|in:aktif,tidak aktif',
+            'catatan' => 'nullable|string',
         ]);
 
-        $service->update($request->all());
-        return redirect()->route('services.index')->with('success', 'Layanan Berhasil Diperbarui');
+        $service->update($validated);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Layanan berhasil diperbarui',
+            'data' => $service
+        ]);
     }
 
     /**
@@ -106,6 +127,9 @@ class ServiceController extends Controller
         $service = Services::findOrFail($id);
         $service->delete();
 
-        return redirect()->route('services.index')->with('success', 'Layanan berhasil dihapus');
+        return response()->json([
+            'success' => true,
+            'message' => 'Layanan berhasil dihapus'
+        ]);
     }
 }
