@@ -19,9 +19,9 @@ class PoliklinikController extends Controller
 
         if($search) {
             $query->where(function($q) use ($search) {
-                $q  ->where('nama_poli',  'LIKE', "%{$search}")
-                    ->orWhere('deskripsi', 'LIKE', "%{$search}")
-                    ->orWhere('status', 'LIKE', "%{$search}");
+                $q  ->where('nama_poli',  'LIKE', "%{$search}%")
+                    ->orWhere('deskripsi', 'LIKE', "%{$search}%")
+                    ->orWhere('status', 'LIKE', "%{$search}%");
             });
         }
 

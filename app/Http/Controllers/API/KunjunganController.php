@@ -403,7 +403,10 @@ class KunjunganController extends Controller
             $visits->appends(['per_page' => $perPage]);
         }
 
-        return response()->json($visits);
+        return response()->json([
+            "visits" => $visits,
+            "search" => $search
+        ], 200);
     }
 
     public function buatLaporan(Request $request,$visitId)

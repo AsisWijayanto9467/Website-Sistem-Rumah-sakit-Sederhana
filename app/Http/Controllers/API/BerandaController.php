@@ -83,8 +83,8 @@ class BerandaController extends Controller
 
         // Table kunjungan
         $search  = $request->input('search');
-        $perPage = $request->input('per_page', 10);
-        $query = Visits::query();
+        $perPage = $request->input('per_page', 5);
+        $query = Visits::with(['patient', 'doctor', 'poliklinik']);
 
         if ($search) {
             $query->where(function($q) use ($search) {

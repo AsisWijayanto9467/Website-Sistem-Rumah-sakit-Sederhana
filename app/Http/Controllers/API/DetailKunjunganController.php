@@ -7,15 +7,16 @@ use App\Models\Medications;
 use App\Models\VisitDetails;
 use App\Models\Visits;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class DetailKunjunganController extends Controller
 {
     public function index($visit_id)
     {
-        $visit = Visits::with('patient', 'doctor', 'service')
+        $visit = Visits::with('patient', 'doctor')
             ->findOrFail($visit_id);
 
-        $details = VisitDetails::with('medication')
+        $details = VisitDetails::with('medications')
             ->where('visit_id', $visit_id)
             ->latest()
             ->get();
@@ -32,8 +33,7 @@ class DetailKunjunganController extends Controller
      */
     public function create($visit_id)
     {
-        $visit = Visits::with('patient', 'doctor')
-            ->findOrFail($visit_id);
+        $visit = Visits::with('patient', 'doctor')->findOrFail($visit_id);
 
         $medications = Medications::all();
 
@@ -53,23 +53,29 @@ class DetailKunjunganController extends Controller
             'diagnosis'     => 'required|string',
             'layanan'       => 'nullable|string',
             'notes'         => 'nullable|string',
-            'medication_id' => 'nullable|exists:medications,id',
-            'quantity'      => 'nullable|integer|min:1',
+            'medication_id' => 'required|exists:medications,id',
+            'quantity'      => 'required|integer|min:1',
         ]);
 
-        $detail = VisitDetails::create([
-            'visit_id'      => $visit_id,
-            'diagnosis'     => $request->diagnosis,
-            'layanan'       => $request->layanan,
-            'notes'         => $request->notes,
-            'medication_id' => $request->medication_id,
-            'quantity'      => $request->quantity,
-        ]);
+        DB::transaction(function () use ($request, $visit_id) {
+
+            $medication = Medications::findOrFail($request->medication_id);
+
+            $medication->decreaseStock($request->quantity);
+
+            VisitDetails::create([
+                'visit_id'      => $visit_id,
+                'diagnosis'     => $request->diagnosis,
+                'layanan'       => $request->layanan,
+                'notes'         => $request->notes,
+                'medication_id' => $medication->id,
+                'quantity'      => $request->quantity,
+            ]);
+        });
 
         return response()->json([
             'status'  => 'success',
-            'message' => 'Detail kunjungan berhasil ditambahkan',
-            'data'    => $detail
+            'message' => 'Detail kunjungan berhasil ditambahkan'
         ], 201);
     }
 
@@ -95,30 +101,68 @@ class DetailKunjunganController extends Controller
      */
     public function update(Request $request, $id)
     {
-        $detail = VisitDetails::findOrFail($id);
+        $detail = VisitDetails::with('medications')->findOrFail($id);
 
         $request->validate([
             'diagnosis'     => 'required|string',
             'layanan'       => 'nullable|string',
             'notes'         => 'nullable|string',
-            'medication_id' => 'nullable|exists:medications,id',
-            'quantity'      => 'nullable|integer|min:1',
+            'medication_id' => 'required|exists:medications,id',
+            'quantity'      => 'required|integer|min:1',
         ]);
 
-        $detail->update([
-            'diagnosis'     => $request->diagnosis,
-            'layanan'       => $request->layanan,
-            'notes'         => $request->notes,
-            'medication_id' => $request->medication_id,
-            'quantity'      => $request->quantity,
-        ]);
+        DB::transaction(function () use ($request, $detail) {
+            $oldMedication = $detail->medications->first();
+
+            if (!$oldMedication) {
+                throw new \Exception('Data obat lama tidak ditemukan');
+            }
+
+            $oldQty = $oldMedication->pivot->quantity;
+
+            $newMedication = Medications::lockForUpdate()
+                ->findOrFail($request->medication_id);
+
+            $newQty = $request->quantity;
+
+            if ($oldMedication->id !== $newMedication->id) {
+                $oldMedication->increaseStock($oldQty);
+                $newMedication->decreaseStock($newQty);
+
+                $detail->medications()->sync([
+                    $newMedication->id => [
+                        'quantity' => $newQty
+                    ]
+                ]);
+
+            } else {
+                $diff = $newQty - $oldQty;
+
+                if ($diff > 0) {
+                    $newMedication->decreaseStock($diff);
+                } elseif ($diff < 0) {
+                    $newMedication->increaseStock(abs($diff));
+                }
+
+                $detail->medications()->updateExistingPivot(
+                    $newMedication->id,
+                    ['quantity' => $newQty]
+                );
+            }
+
+            $detail->update([
+                'diagnosis' => $request->diagnosis,
+                'layanan'   => $request->layanan,
+                'notes'     => $request->notes,
+            ]);
+        });
 
         return response()->json([
             'status'  => 'success',
-            'message' => 'Detail kunjungan berhasil diperbarui',
-            'data'    => $detail
+            'message' => 'Detail kunjungan berhasil diperbarui'
         ]);
     }
+
 
     /**
      * DELETE detail kunjungan
@@ -126,7 +170,16 @@ class DetailKunjunganController extends Controller
     public function destroy($id)
     {
         $detail = VisitDetails::findOrFail($id);
-        $detail->delete();
+
+        DB::transaction(function () use ($detail) {
+
+            if ($detail->medication_id && $detail->quantity) {
+                $medication = Medications::find($detail->medication_id);
+                $medication->increaseStock($detail->quantity);
+            }
+
+            $detail->delete();
+        });
 
         return response()->json([
             'status'  => 'success',

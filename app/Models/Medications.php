@@ -19,6 +19,20 @@ class Medications extends Model
         'harga' => 'decimal:2'
     ];
 
+    public function decreaseStock(int $qty): void
+    {
+        if ($this->stock < $qty) {
+            throw new \Exception("Stok {$this->name} tidak mencukupi");
+        }
+
+        $this->decrement('stock', $qty);
+    }
+
+    public function increaseStock(int $qty): void
+    {
+        $this->increment('stock', $qty);
+    }
+
     public function visitDetails()
     {
         return $this->belongsToMany(
