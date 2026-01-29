@@ -1,0 +1,117 @@
+<?php
+
+use App\Http\Controllers\AuthController;
+use App\Http\Controllers\BerandaController;
+use App\Http\Controllers\DetailKunjunganController;
+use App\Http\Controllers\DokterController;
+use App\Http\Controllers\JadwalController;
+use App\Http\Controllers\KunjunganController;
+use App\Http\Controllers\MedicationController;
+use App\Http\Controllers\PasienController;
+use App\Http\Controllers\PengaturanController;
+use App\Http\Controllers\PoliklinikController;
+use App\Http\Controllers\ServiceController;
+use Illuminate\Support\Facades\Route;
+
+Route::get('/', [AuthController::class, 'showLogin'])->name('login');
+Route::post('/login', [AuthController::class, 'login'])->name('login.proses');
+Route::get('/logout', [AuthController::class, 'logout'])->name('logout');
+
+Route::middleware(['auth'])->group(function () {
+    Route::get('/admin/Beranda', [BerandaController::class, 'index'])->name('admin.beranda');
+
+    // Pengaturan
+    Route::get('/profile', [PengaturanController::class, 'index'])->name('profile.index');
+    Route::put('/profile', [PengaturanController::class, 'update'])->name('profile.update');
+    Route::get('/password/edit', [PengaturanController::class, 'indexPassword'])->name('password.edit');
+    Route::put('/password/update', [PengaturanController::class, 'ubah_password'])->name('password.update');
+
+    // Halaman pasien
+    Route::get('/admin/pasien',[PasienController::class, 'index'])->name('pasien.index');
+    Route::get('/admin/pasien/create',[PasienController::class, 'create'])->name('pasien.create');
+    Route::post('/admin/pasien',[PasienController::class, 'store'])->name('pasien.store');
+    Route::get('/admin/pasien/{id}',[PasienController::class, 'show'])->name('pasien.show');
+    Route::get('/admin/pasien/{id}',[PasienController::class, 'edit'])->name('pasien.edit');
+    Route::put('/admin/pasien/{id}',[PasienController::class, 'update'])->name('pasien.update');
+    Route::delete('/admin/pasien/{id}',[PasienController::class, 'destroy'])->name('pasien.destroy');
+
+    // Halaman poliklinik
+    Route::get('/admin/poliklinik',[PoliklinikController::class, 'index'])->name( 'poliklinik.index');
+    Route::get('/admin/poliklinik/create',[PoliklinikController::class, 'create'])->name('poliklinik.create');
+    Route::post('/admin/poliklinik',[PoliklinikController::class, 'store'])->name('poliklinik.store');
+    Route::get('/admin/poliklinik/{id}',[PoliklinikController::class, 'show'])->name('poliklinik.show');
+    Route::get('/admin/poliklinik/{id}',[PoliklinikController::class, 'edit'])->name('poliklinik.edit');
+    Route::put('/admin/poliklinik/{id}',[PoliklinikController::class, 'update'])->name('poliklinik.update');
+    Route::delete('/admin/poliklinik/{id}',[PoliklinikController::class, 'destroy'])->name('poliklinik.destroy');
+
+    // Halaman poliklinik
+    Route::get('/admin/Medicine',[MedicationController::class, 'index'])->name('medication.index');
+    Route::get('/admin/Medicine/create',[MedicationController::class, 'create'])->name('medication.create');
+    Route::post('/admin/Medicine',[MedicationController::class, 'store'])->name('medication.store');
+    Route::get('/admin/Medicine/{id}',[MedicationController::class, 'edit'])->name('medication.edit');
+    Route::put('/admin/Medicine/{id}',[MedicationController::class, 'update'])->name('medication.update');
+    Route::delete('/admin/Medicine/{id}',[MedicationController::class, 'destroy'])->name('medication.destroy');
+
+    // Halaman dokter
+    Route::get('/admin/dokter',[DokterController::class, 'index'])->name('dokter.index');
+    Route::get('/admin/dokter/create',[DokterController::class, 'create'])->name('dokter.create');
+    Route::post('/admin/dokter',[DokterController::class, 'store'])->name('dokter.store');
+    Route::get('/admin/dokter/{id}',[DokterController::class, 'show'])->name('dokter.show');
+    Route::get('/admin/dokter/{id}',[DokterController::class, 'edit'])->name('dokter.edit');
+    Route::put('/admin/dokter/{id}',[DokterController::class, 'update'])->name('dokter.update');
+    Route::delete('/admin/dokter/{id}',[DokterController::class, 'destroy'])->name('dokter.destroy');
+
+    // tampilkan pasien berdasarkan id dokter
+    Route::get('/dokter/showPasien', [DokterController::class, 'showPasien'])->name('dokter.showPasien');
+
+    // Halaman pasien
+    Route::get('/admin/services',[ServiceController::class, 'index'])->name('services.index');
+    Route::get('/admin/services/create',[ServiceController::class, 'create'])->name('services.create');
+    Route::post('/admin/services',[ServiceController::class, 'store'])->name('services.store');
+    Route::get('/admin/service/{id}',[ServiceController::class, 'edit'])->name('service.edit');
+    Route::put('/admin/service/{id}',[ServiceController::class, 'update'])->name('service.update');
+    Route::delete('/admin/service/{id}',[ServiceController::class, 'destroy'])->name('service.destroy');
+
+    // Halaman Kunjungan
+    Route::get('/admin/kunjungan/pending',[KunjunganController::class, 'pending'])->name('kunjungan.pending');
+    Route::get('/admin/kunjungan/completed',[KunjunganController::class, 'completed'])->name('kunjungan.completed');
+    Route::get('/admin/kunjungan/not-approved',[KunjunganController::class, 'notApproved'])->name('kunjungan.notApproved');
+    Route::get('/admin/kunjungan',[KunjunganController::class, 'create'])->name('kunjungan.create');
+    Route::post('/admin/kunjungan',[KunjunganController::class, 'store'])->name('kunjungan.store');
+    Route::put('/admin/kunjungan/approved/{id}',[KunjunganController::class, 'approve'])->name('kunjungan.approve');
+    Route::put('/admin/kunjungan/reject/{id}',[KunjunganController::class, 'reject'])->name('kunjungan.reject');
+    Route::put('/admin/kunjungan/cencle-approved/{id}',[KunjunganController::class, 'cancelApproval'])->name('kunjungan.cancelApproval');
+    Route::put('/admin/kunjungan/approve-kembali/{id}', [KunjunganController::class, 'approveKembali'])->name('kunjungan.approve-kembali');
+    Route::put('/admin/kunjungan/{id}',[KunjunganController::class, 'update'])->name('kunjungan.update');
+    Route::get('/admin/kunjungan/{id}',[KunjunganController::class, 'edit'])->name('kunjungan.edit');
+    Route::delete('/admin/kunjungan/{id}',[KunjunganController::class, 'destroy'])->name('kunjungan.destroy');
+    
+    // Halaman Kunjungan
+    Route::get('/admin/detail/kunjungan',[DetailKunjunganController::class, 'index'])->name('detailKunjungan.index');
+    Route::get('/admin/detail/kunjungan',[DetailKunjunganController::class, 'create'])->name('detailKunjungan.create');
+    Route::post('/admin/detail/kunjungan',[DetailKunjunganController::class, 'store'])->name('detailKunjungan.store');
+    Route::put('/admin/detail/kunjungan/{id}',[DetailKunjunganController::class, 'update'])->name('detailKunjungan.update');
+    Route::put('/admin/detail/kunjungan/{id}',[DetailKunjunganController::class, 'edit'])->name('detailKunjungan.edit');
+    Route::delete('/admin/detail/kunjungan/{id}',[DetailKunjunganController::class, 'destroy'])->name('detailKunjungan.destroy');
+
+    // Halaman Jadwal Dokter
+    Route::get('/dokter/jadwals',[JadwalController::class, 'index'])->name('jadwals.index');
+    Route::get('/dokter/jadwals/create',[JadwalController::class, 'create'])->name('jadwals.create');
+    Route::post('/dokter/jadwals',[JadwalController::class, 'store'])->name('jadwals.store');
+    Route::get('/dokter/jadwal/{id}',[JadwalController::class, 'edit'])->name('jadwal.edit');
+    Route::put('/dokter/jadwal/{id}',[JadwalController::class, 'update'])->name('jadwal.update');
+    Route::delete('/dokter/jadwal/{id}',[JadwalController::class, 'destroy'])->name('jadwal.destroy');
+
+    // Halaman Kunjungan Untuk Dokter
+    Route::get('/dokter/kunjungan', [KunjunganController::class, 'kunjunganDokter'])->name('dokter.kunjungan');
+    Route::get('/dokter/buatLaporan/{visitId}', [KunjunganController::class, 'buatLaporan'])->name('dokter.buatLaporan');
+    Route::post('/dokter/storeLaporan/{visitId}', [KunjunganController::class, 'storeLaporan'])->name('dokter.storeLaporan');
+    Route::get('/dokter/editLaporan/{visitId}', [KunjunganController::class, 'editLaporan'])->name('dokter.editLaporan');
+    Route::put('/dokter/updateLaporan/{visitId}', [KunjunganController::class, 'updateLaporan'])->name('dokter.updateLaporan');
+    Route::get('/dokter/showLaporan/{visitId}', [KunjunganController::class, 'viewLaporan'])->name('dokter.showLaporan');
+    Route::get('/dokter/downloadLaporan/{visitId}', [KunjunganController::class, 'downloadLaporan'])->name('dokter.downloadLaporan');
+
+    Route::get('/check-report-status/{visitId}', [KunjunganController::class, 'checkReportStatus'])->name('check.report.status');
+    Route::get('/admin/showLaporan/{visitId}', [KunjunganController::class, 'viewAdminLaporan'])->name('admin.showLaporan');
+    Route::get('/admin/download-laporan/{visitId}', [KunjunganController::class, 'downloadAdminLaporan'])->name('admin.downloadLaporan');
+});

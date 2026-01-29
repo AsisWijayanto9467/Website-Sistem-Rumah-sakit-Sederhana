@@ -1,0 +1,43 @@
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Model;
+
+class Medications extends Model
+{
+    protected $table = 'medications';
+    
+    protected $fillable = [
+        'nama',
+        'harga',
+        'deskripsi',
+        'stock',
+    ];
+
+    protected $casts = [
+        'harga' => 'decimal:2'
+    ];
+
+    public function decreaseStock(int $qty): void
+    {
+        if ($this->stock < $qty) {
+            throw new \Exception("Stok {$this->name} tidak mencukupi");
+        }
+
+        $this->decrement('stock', $qty);
+    }
+
+    public function increaseStock(int $qty): void
+    {
+        $this->increment('stock', $qty);
+    }
+
+    public function visitDetails()
+    {
+        return $this->belongsToMany(
+            VisitDetails::class,
+            'visit_detail_medications'
+        )->withPivot('quantity', 'aturan_pakai');
+    }
+}
